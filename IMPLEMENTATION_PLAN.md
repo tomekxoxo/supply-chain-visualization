@@ -85,12 +85,57 @@ yarn build
 
 ## Fazy realizacji
 
-1. **Przygotowanie** — utrzymanie `AGENTS.md`, trzech lokalnych skillów, konfiguracji testów i CI; sprawdzenie bazowych kontroli.
-2. **Domena** — typy, deterministyczne dane, selektory, reduktor i testy jednostkowe.
-3. **Filtry** — współdzielone atomy i molekuły filtrów oraz domenowy organizm w `features/production-explorer/components`, zakres lat, reset i testy komponentowe.
-4. **Mapa** — dane geograficzne, integracja MapLibre, legenda, tooltipy, kliknięcia i stany awaryjne.
-5. **Dashboard** — domenowe komponenty podsumowań i wykresu, współdzielony szablon oraz konkretna strona responsywna.
-6. **Finalizacja** — E2E dla gotowego interfejsu, README, pełne bramki jakości i przegląd różnic.
+### Stan na 12 października 2026
+
+Zakończone i zweryfikowane:
+
+- [x] **Przygotowanie** — Yarn 1.22.22 jest przypięty w `package.json`; alias `features/*` działa w TypeScript, Vite i Vitest; test setup czyści DOM po każdym teście.
+- [x] **Domena** — typy, deterministyczne dane testowe 2010–2026, selektory, reduktor filtrów oraz testy jednostkowe.
+- [x] **Stan funkcji** — `useProductionExplorer` łączy dane, selektory i reduktor w jedno API dla interfejsu.
+- [x] **Filtry** — atomy `Button` i `Select`, domenowy `ProductionFilters`, wybór kraju/produktu/lat, reset oraz testy komponentowe.
+
+Po tych etapach jest 14 testów Vitest. Ostatnio przeszły: `yarn format:check`, `yarn lint`, `yarn tsc -b`, `yarn test` i `yarn build`.
+
+### Kolejne etapy — realizować jako osobne commity
+
+1. **Kompozycja dashboardu**
+   - Podłączyć `useProductionExplorer` i `ProductionFilters` w `App`.
+   - Dodać semantyczny nagłówek, responsywny kontener oraz wyraźne stany zastępcze dla mapy, wykresu i podsumowań.
+   - Nie dodawać jeszcze biblioteki map ani wykresów.
+   - Sugerowany commit: `feat(app): compose production explorer dashboard`.
+
+2. **Podsumowania produkcji**
+   - Utworzyć domenowy komponent kart: suma, średnia, minimum i maksimum wraz z jednostką.
+   - Dla `summary === null` pokazać stan „brak danych”; wartość `0` wyświetlać jako prawidłowy wynik.
+   - Dodać testy komponentu.
+   - Sugerowany commit: `feat(production-explorer): add production summary cards`.
+
+3. **Wykres roczny**
+   - Przed pracą potwierdzić użycie Recharts, zainstalować je przez Yarn i zaktualizować wyłącznie `yarn.lock`.
+   - Zbudować wykres z `yearlyProduction`, dostępny opis tekstowy oraz stan braku danych.
+   - Sugerowany commit: `feat(production-explorer): add annual production chart`.
+
+4. **Dane geograficzne i mapa bazowa**
+   - Przed pracą potwierdzić użycie MapLibre GL JS; dodać zależność przez Yarn.
+   - Dodać lokalny, licencjonowany GeoJSON obejmujący kody krajów użyte w danych i udokumentować źródło.
+   - Utworzyć mapę z jedną instancją, neutralnym stanem bez produktu, choropleth, legendą i bez zależności od zewnętrznych kafelków w testach.
+   - Sugerowany commit: `feat(production-explorer): add production choropleth map`.
+
+5. **Interakcje mapy**
+   - Tooltip: kraj, produkt, wartość, jednostka i wybrany okres.
+   - Kliknięcie kraju aktualizuje filtr kraju; aktywny kraj jest widocznie zaznaczony.
+   - Dodać obsługę błędu inicjalizacji oraz testy logiki niezależne od MapLibre.
+   - Sugerowany commit: `feat(production-explorer): add map selection and tooltips`.
+
+6. **Integracja i E2E**
+   - Rozszerzyć Playwright o kraj→produkt, produkt→kraj, zmianę zakresu oraz reset.
+   - Nie asertywować zewnętrznych kafelków ani renderowania silnika mapy; testować zachowanie filtrów i widoczne dane.
+   - Sugerowany commit: `test(e2e): cover production explorer flows`.
+
+7. **Dokumentacja i automatyzacja**
+   - Zastąpić README startera dokumentacją aplikacji: Yarn, uruchamianie, architektura, dane testowe, agregacja, mapa i atrybucja.
+   - Dodać workflow GitHub Actions z `yarn install --frozen-lockfile`, bramkami jakości i E2E.
+   - Sugerowany commit: `docs: document production explorer setup` oraz osobny `ci: add quality workflow`.
 
 ## Kryteria ukończenia
 

@@ -47,12 +47,18 @@ const ProductionFilters = forwardRef<HTMLFormElement, ProductionFiltersProps>(
     return (
       <form
         ref={ref}
+        aria-labelledby="filters-heading"
         className="rounded-xl border border-slate-700 bg-slate-900 p-5 shadow-lg"
         onSubmit={handleSubmit}
       >
         <div className="mb-4 flex flex-wrap items-baseline justify-between gap-2">
           <div>
-            <h2 className="text-lg font-semibold text-white">Filters</h2>
+            <h2
+              id="filters-heading"
+              className="text-lg font-semibold text-white"
+            >
+              Filters
+            </h2>
             <p className="text-sm text-slate-300">Test data for 2010–2026.</p>
           </div>
           <Button onClick={explorer.resetFilters} variant="secondary">
