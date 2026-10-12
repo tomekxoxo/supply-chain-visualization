@@ -1,6 +1,7 @@
 import { forwardRef } from "react";
 import { useProductionExplorer } from "features/production-explorer/hooks";
 import ProductionFilters from "../production-filters";
+import ProductionSummary from "../production-summary";
 
 const ProductionExplorerDashboard = forwardRef<HTMLDivElement>((_, ref) => {
   const explorer = useProductionExplorer();
@@ -42,17 +43,7 @@ const ProductionExplorerDashboard = forwardRef<HTMLDivElement>((_, ref) => {
           </p>
         </section>
 
-        <section
-          aria-labelledby="summary-heading"
-          className="rounded-xl border border-dashed border-slate-600 bg-slate-900/70 p-6"
-        >
-          <h2 id="summary-heading" className="text-lg font-semibold text-white">
-            Production summary
-          </h2>
-          <p className="mt-2 text-sm text-slate-300">
-            Summary metrics will appear here after you choose a product.
-          </p>
-        </section>
+        <ProductionSummary summary={explorer.summary} />
       </div>
 
       <section
