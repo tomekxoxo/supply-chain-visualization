@@ -1,7 +1,9 @@
-import { forwardRef } from "react";
+import { forwardRef, lazy, Suspense } from "react";
 import { useProductionExplorer } from "features/production-explorer/hooks";
 import ProductionFilters from "../production-filters";
 import ProductionSummary from "../production-summary";
+
+const ProductionAnnualChart = lazy(() => import("../production-annual-chart"));
 
 const ProductionExplorerDashboard = forwardRef<HTMLDivElement>((_, ref) => {
   const explorer = useProductionExplorer();
@@ -46,18 +48,22 @@ const ProductionExplorerDashboard = forwardRef<HTMLDivElement>((_, ref) => {
         <ProductionSummary summary={explorer.summary} />
       </div>
 
-      <section
-        aria-labelledby="chart-heading"
-        className="min-h-56 rounded-xl border border-dashed border-slate-600 bg-slate-900/70 p-6"
+      <Suspense
+        fallback={
+          <section
+            aria-busy="true"
+            aria-labelledby="chart-heading"
+            className="min-h-56 rounded-xl border border-slate-700 bg-slate-900 p-6"
+          >
+            <h2 id="chart-heading" className="text-lg font-semibold text-white">
+              Annual production
+            </h2>
+            <p className="mt-2 text-sm text-slate-300">Loading chart data…</p>
+          </section>
+        }
       >
-        <h2 id="chart-heading" className="text-lg font-semibold text-white">
-          Annual production
-        </h2>
-        <p className="mt-2 text-sm text-slate-300">
-          The annual production chart will appear here after you choose a
-          product.
-        </p>
-      </section>
+        <ProductionAnnualChart data={explorer.yearlyProduction} />
+      </Suspense>
     </div>
   );
 });
