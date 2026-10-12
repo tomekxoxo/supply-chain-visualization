@@ -98,6 +98,7 @@ export const productionRecords: readonly ProductionRecord[] =
     values.map((value, index) => ({
       countryCode,
       productId,
+      unit: "tonnes",
       year: 2010 + index,
       value: value * 1_000_000,
     })),

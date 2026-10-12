@@ -7,7 +7,7 @@ export type CountryCode = "BRA" | "CHN" | "DEU" | "IND" | "POL" | "USA";
 
 export type ProductId = "coffee" | "cotton" | "soybeans" | "wheat";
 
-export type ProductionUnit = "tonnes";
+export type ProductionUnit = "hectares" | "tonnes";
 
 export interface Country {
   code: CountryCode;
@@ -23,6 +23,7 @@ export interface Product {
 export interface ProductionRecord {
   countryCode: CountryCode;
   productId: ProductId;
+  unit: ProductionUnit;
   year: number;
   value: number;
 }
