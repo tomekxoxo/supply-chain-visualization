@@ -9,9 +9,9 @@ Użytkownik może rozpocząć wybór od kraju lub produktu; drugi filtr pokazuje
 ## Ustalenia zgodne z repozytorium
 
 - React, TypeScript, Vite i Tailwind CSS pozostają podstawą aplikacji.
-- Struktura komponentów stosuje **Atomic Design** zgodnie z `AGENTS.md`: `atoms`, `molecules`, `organisms`, `templates` i `pages`.
+- Stosujemy hybrydę **Feature + Atomic Design** zgodnie z `AGENTS.md`: współdzielone, niezależne od domeny komponenty należą do `components/` (`atoms`, `molecules`, `organisms`, `templates`), a logika i interfejs specyficzne dla domeny do `features/<feature>/`.
 - Lintowanie i formatowanie realizują odpowiednio **Oxlint** i **Oxfmt**. Nie dodajemy ESLint ani Prettier.
-- Pakiety instaluje się przez `npm`; aktualizowany jest `package-lock.json`.
+- Pakiety instaluje się przez `yarn`; aktualizowany jest `yarn.lock`.
 - Do testów używamy Vitest, React Testing Library i Playwright.
 - MUI Core, MapLibre GL JS, Recharts i Zod mogą zostać dodane dopiero w odpowiedniej fazie, po potwierdzeniu konkretnego zastosowania.
 
@@ -31,12 +31,15 @@ src/
       data/                    # deterministyczne dane testowe
       model/                   # typy, selektory i reduktor filtrów
       hooks/                   # hooki specyficzne dla eksploratora
+      components/              # filtry, mapa i podsumowania specyficzne dla domeny
       utils/                   # funkcje domenowe, jeśli będą potrzebne
   test/                        # współdzielona konfiguracja testów
   main.tsx
 ```
 
 Komponenty umieszczamy w katalogach kebab-case i eksportujemy przez `index.ts`. Komponenty opakowujące element DOM używają `forwardRef`, nie udostępniają `className` w natywnych propsach i mają `displayName`.
+
+Granica architektury jest jednokierunkowa: `features/*` mogą korzystać z `components/*`, lecz współdzielone `components/*` nie importują z funkcji domenowych. Komponent pozostaje w funkcji, dopóki nie jest użyteczny bez jej modelu danych.
 
 Logika filtrowania i agregacji pozostaje poza komponentami prezentacyjnymi. Nie przechowujemy wartości pochodnych w stanie React.
 
@@ -65,28 +68,28 @@ Po dodaniu MapLibre mapa pokaże granice państw, sekwencyjną skalę kolorów, 
 Skrypty jakościowe:
 
 ```bash
-npm run lint
-npm run format:check
-npx tsc -b
-npm run test
-npm run test:coverage
-npm run test:e2e
-npm run build
+yarn lint
+yarn format:check
+yarn tsc -b
+yarn test
+yarn test:coverage
+yarn test:e2e
+yarn build
 ```
 
 - Oxlint sprawdza kod, a Oxfmt jego formatowanie.
 - Vitest testuje selektory i przejścia stanu: zgodność filtrów, lata graniczne, agregacje, jednostki, brak danych i reset.
 - React Testing Library testuje zachowanie filtrów, reset oraz widoczne stany.
 - Playwright obejmuje główne ścieżki kraj→produkt, produkt→kraj, zmianę okresu i reset; testy nie mogą zależeć od zewnętrznych kafelków mapy.
-- GitHub Actions na `push` i `pull_request` do `main` instaluje zależności przez `npm ci`, uruchamia formatowanie, lint, typy, testy jednostkowe, build i E2E.
+- GitHub Actions na `push` i `pull_request` do `main` instaluje zależności przez `yarn install --frozen-lockfile`, uruchamia formatowanie, lint, typy, testy jednostkowe, build i E2E.
 
 ## Fazy realizacji
 
 1. **Przygotowanie** — utrzymanie `AGENTS.md`, trzech lokalnych skillów, konfiguracji testów i CI; sprawdzenie bazowych kontroli.
 2. **Domena** — typy, deterministyczne dane, selektory, reduktor i testy jednostkowe.
-3. **Filtry** — atomy i molekuły filtrów, zakres lat, reset oraz testy komponentowe.
+3. **Filtry** — współdzielone atomy i molekuły filtrów oraz domenowy organizm w `features/production-explorer/components`, zakres lat, reset i testy komponentowe.
 4. **Mapa** — dane geograficzne, integracja MapLibre, legenda, tooltipy, kliknięcia i stany awaryjne.
-5. **Dashboard** — organizmy podsumowań i wykresu, szablon oraz konkretna strona responsywna.
+5. **Dashboard** — domenowe komponenty podsumowań i wykresu, współdzielony szablon oraz konkretna strona responsywna.
 6. **Finalizacja** — E2E dla gotowego interfejsu, README, pełne bramki jakości i przegląd różnic.
 
 ## Kryteria ukończenia

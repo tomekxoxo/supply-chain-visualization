@@ -10,8 +10,8 @@ repository. Read it before making changes. Use `BUGBOT.md` for diagnosis and
 - Make the smallest change that fully solves the request.
 - Preserve unrelated user changes; never reset, discard, or reformat them.
 - Use `apply_patch` for source and documentation edits and `rg` for searches.
-- Prefer `npm` for package operations. `package-lock.json` is maintained; do
-  not update `yarn.lock` unless explicitly asked.
+- Use `yarn` for package operations. `yarn.lock` is the maintained lockfile;
+  do not create or update `package-lock.json`.
 - Ask a concise question only when its answer is required to proceed safely.
 - On handoff, state the outcome, files changed, and checks run.
 
@@ -19,27 +19,28 @@ repository. Read it before making changes. Use `BUGBOT.md` for diagnosis and
 
 - React 19, Vite 8, TypeScript 7, and Tailwind CSS 4.
 - Node.js 22.22.1 or later is required.
-- TypeScript is strict and uses project references. Use `npx tsc -b` or
-  `npm run build`, never plain root-level `tsc`.
-- The UI follows Atomic Design: atoms, molecules, organisms, templates, pages.
+- TypeScript is strict and uses project references. Use `yarn tsc -b` or
+  `yarn build`, never plain root-level `tsc`.
+- The UI uses a hybrid Feature + Atomic Design architecture. Shared UI follows
+  Atomic Design; domain-specific logic and UI live with their feature.
 - Tailwind v4 configuration lives in `src/index.css`, not `tailwind.config.js`.
 
 ## Commands
 
 ```bash
-npm install              # Install dependencies and Husky hooks
-npm run dev              # Start Vite at http://localhost:3000
-npm run build            # Type-check and create a production build
-npm run lint             # Run Oxlint
-npm run lint:fix         # Apply safe Oxlint fixes
-npm run format           # Format with Oxfmt
-npm run format:check     # Check formatting without writing
-npm run preview          # Preview the production build
-npx tsc -b               # Type-check only
+yarn install             # Install dependencies and Husky hooks
+yarn dev                 # Start Vite at http://localhost:3000
+yarn build               # Type-check and create a production build
+yarn lint                # Run Oxlint
+yarn lint:fix            # Apply safe Oxlint fixes
+yarn format              # Format with Oxfmt
+yarn format:check        # Check formatting without writing
+yarn preview             # Preview the production build
+yarn tsc -b              # Type-check only
 ```
 
-For a normal application change, run `npm run lint`, `npm run format:check`,
-and `npm run build`.
+For a normal application change, run `yarn lint`, `yarn format:check`, and
+`yarn build`.
 
 ## Source layout and imports
 
@@ -47,11 +48,13 @@ and `npm run build`.
 src/
   app/                 # App composition and pages
   components/
-    atoms/             # Single reusable UI elements
-    molecules/         # Small compositions of atoms
-    organisms/         # Feature-rich sections
-    templates/         # Page layouts
+    atoms/             # Shared, reusable visual primitives
+    molecules/         # Shared, small compositions of atoms
+    organisms/         # Shared, complex UI sections
+    templates/         # Shared page layouts
   hooks/               # Custom React hooks
+  features/
+    <feature>/         # Domain-specific data, model, hooks, and UI
   index.css            # Tailwind v4 and global styles
 ```
 
@@ -60,6 +63,7 @@ Use aliases instead of deep relative imports:
 ```ts
 import App from "app/app";
 import Button from "components/atoms/button";
+import ProductionMap from "features/production-explorer/components/production-map";
 import { useExample } from "hooks/useExample";
 ```
 
@@ -67,7 +71,19 @@ Aliases are defined in `tsconfig.app.json` and read by Vite. Keep the `./`
 prefix in their path values: TypeScript 7 no longer supports the old
 `baseUrl` behavior.
 
-## Components
+## Architecture and components
+
+Use the hybrid architecture consistently:
+
+- Put reusable, domain-agnostic UI in `components/`, at the lowest suitable
+  Atomic Design level.
+- Put domain-specific components, state, selectors, data, and hooks in the
+  owning `features/<feature>/` directory. A feature component may compose
+  shared components, but shared components must not import from a feature.
+- Move a feature component to `components/` only after it is genuinely
+  reusable without its domain model.
+- Pages in `app/` compose features and templates; they do not own feature
+  business logic.
 
 Choose the lowest suitable Atomic Design level:
 
