@@ -1,19 +1,32 @@
 import { forwardRef, useEffect, useMemo, useRef, useState } from "react";
 import * as maplibregl from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
+import maplibreWorkerUrl from "maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url";
 import type {
   GeoJSONSource,
   Map as MapLibreMap,
+  MapLayerMouseEvent,
   StyleSpecification,
 } from "maplibre-gl";
 import { getProductionMapData } from "features/production-explorer/data";
 import type {
+  CountryCode,
   CountryProductionTotal,
   Product,
+  ProductionFilters,
 } from "features/production-explorer/model";
+import {
+  getCountryCode,
+  getMapTooltipText,
+} from "features/production-explorer/utils/map-interactions";
+
+maplibregl.setWorkerUrl(maplibreWorkerUrl);
 
 interface ProductionMapProps {
   countryTotals: readonly CountryProductionTotal[];
+  filters: ProductionFilters;
+  onSelectCountry: (countryCode: CountryCode) => void;
+  selectedCountry: CountryCode | null;
   selectedProduct: Product | null;
 }
 
@@ -52,6 +65,13 @@ const createMapStyle = (): StyleSpecification => ({
       source: "countries",
       type: "line",
     },
+    {
+      filter: ["==", ["get", "iso3"], ""],
+      id: "countries-selected",
+      paint: { "line-color": "#c084fc", "line-width": 2.5 },
+      source: "countries",
+      type: "line",
+    },
   ],
   sources: {
     countries: {
@@ -75,10 +95,20 @@ const hasWebGLSupport = (): boolean => {
 };
 
 const ProductionMap = forwardRef<HTMLElement, ProductionMapProps>(
-  ({ countryTotals, selectedProduct }, ref) => {
+  (
+    {
+      countryTotals,
+      filters,
+      onSelectCountry,
+      selectedCountry,
+      selectedProduct,
+    },
+    ref,
+  ) => {
     const containerRef = useRef<HTMLDivElement>(null);
     const mapRef = useRef<MapLibreMap | null>(null);
-    const [mapError, setMapError] = useState(false);
+    const popupRef = useRef<maplibregl.Popup | null>(null);
+    const [mapError, setMapError] = useState(() => !hasWebGLSupport());
     const mapData = useMemo(
       () => getProductionMapData(countryTotals),
       [countryTotals],
@@ -87,16 +117,32 @@ const ProductionMap = forwardRef<HTMLElement, ProductionMapProps>(
     useEffect(() => {
       const container = containerRef.current;
 
-      if (container === null || !hasWebGLSupport()) {
-        setMapError(true);
+      if (container === null || mapError) {
         return;
       }
 
-      const map = new maplibregl.Map({
-        attributionControl: false,
-        container,
-        style: createMapStyle(),
-      });
+      let map: MapLibreMap;
+
+      try {
+        map = new maplibregl.Map({
+          attributionControl: false,
+          container,
+          style: createMapStyle(),
+        });
+      } catch {
+        let disposed = false;
+
+        queueMicrotask(() => {
+          if (!disposed) {
+            setMapError(true);
+          }
+        });
+
+        return () => {
+          disposed = true;
+        };
+      }
+
       mapRef.current = map;
       map.on("load", () => {
         map.fitBounds(
@@ -107,12 +153,16 @@ const ProductionMap = forwardRef<HTMLElement, ProductionMapProps>(
           { animate: false, padding: 20 },
         );
       });
+      map.once("error", () => {
+        setMapError(true);
+      });
 
       return () => {
+        popupRef.current?.remove();
         map.remove();
         mapRef.current = null;
       };
-    }, []);
+    }, [mapError]);
 
     useEffect(() => {
       const map = mapRef.current;
@@ -137,6 +187,117 @@ const ProductionMap = forwardRef<HTMLElement, ProductionMapProps>(
         map.off("load", updateSource);
       };
     }, [mapData]);
+
+    useEffect(() => {
+      const map = mapRef.current;
+
+      if (map === null) {
+        return;
+      }
+
+      const updateSelection = () => {
+        map.setFilter("countries-selected", [
+          "==",
+          ["get", "iso3"],
+          selectedCountry ?? "",
+        ]);
+      };
+
+      if (map.isStyleLoaded()) {
+        updateSelection();
+      } else {
+        map.once("load", updateSelection);
+      }
+
+      return () => {
+        map.off("load", updateSelection);
+      };
+    }, [selectedCountry]);
+
+    useEffect(() => {
+      const map = mapRef.current;
+
+      if (map === null || selectedProduct === null) {
+        return;
+      }
+
+      const removePopup = () => {
+        popupRef.current?.remove();
+        popupRef.current = null;
+      };
+      const getCountryDetails = (event: MapLayerMouseEvent) => {
+        const feature = event.features?.[0];
+        const properties = feature?.properties;
+        const countryCode = getCountryCode(properties?.iso3);
+        const countryName =
+          typeof properties?.name === "string" ? properties.name : null;
+        const value =
+          typeof properties?.value === "number" ? properties.value : null;
+
+        return { countryCode, countryName, value };
+      };
+      const handleMouseMove = (event: MapLayerMouseEvent) => {
+        const { countryName, value } = getCountryDetails(event);
+
+        if (countryName === null) {
+          return;
+        }
+
+        removePopup();
+        const tooltip = document.createElement("p");
+        tooltip.className = "m-0 text-sm text-slate-900";
+        tooltip.textContent = getMapTooltipText({
+          countryName,
+          period: filters.yearRange,
+          productName: selectedProduct.name,
+          unit: selectedProduct.unit,
+          value,
+        });
+        popupRef.current = new maplibregl.Popup({
+          closeButton: false,
+          closeOnClick: false,
+          maxWidth: "20rem",
+        })
+          .setLngLat(event.lngLat)
+          .setDOMContent(tooltip)
+          .addTo(map);
+      };
+      const handleMouseEnter = () => {
+        map.getCanvas().style.cursor = "pointer";
+      };
+      const handleMouseLeave = () => {
+        map.getCanvas().style.cursor = "";
+        removePopup();
+      };
+      const handleClick = (event: MapLayerMouseEvent) => {
+        const { countryCode, value } = getCountryDetails(event);
+
+        if (countryCode !== null && value !== null) {
+          onSelectCountry(countryCode);
+        }
+      };
+      const addInteractions = () => {
+        map.on("click", "countries-fill", handleClick);
+        map.on("mouseenter", "countries-fill", handleMouseEnter);
+        map.on("mouseleave", "countries-fill", handleMouseLeave);
+        map.on("mousemove", "countries-fill", handleMouseMove);
+      };
+
+      if (map.isStyleLoaded()) {
+        addInteractions();
+      } else {
+        map.once("load", addInteractions);
+      }
+
+      return () => {
+        map.off("click", "countries-fill", handleClick);
+        map.off("load", addInteractions);
+        map.off("mouseenter", "countries-fill", handleMouseEnter);
+        map.off("mouseleave", "countries-fill", handleMouseLeave);
+        map.off("mousemove", "countries-fill", handleMouseMove);
+        removePopup();
+      };
+    }, [filters.yearRange, onSelectCountry, selectedProduct]);
 
     return (
       <section
