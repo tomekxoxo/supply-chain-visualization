@@ -47,10 +47,13 @@
     "prepare": "husky"
   },
   "dependencies": {
+    "maplibre-gl": "^6.14.0",
     "react": "^19.3.0",
     "react-dom": "^19.3.0",
     "react-is": "19.3.0",
-    "recharts": "^3.10.1"
+    "recharts": "^3.10.1",
+    "topojson-client": "^3.1.0",
+    "world-atlas": "^2.0.2"
   },
   "devDependencies": {
     "@commitlint/cli": "^21.2.3",
@@ -65,6 +68,7 @@
     "@types/node": "^24",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
+    "@types/topojson-client": "^3.1.5",
     "@vitejs/plugin-react": "^6.1.1",
     "@vitest/coverage-v8": "^5.0.4",
     "husky": "^9.1.7",

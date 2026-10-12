@@ -102,7 +102,7 @@ src/components/atoms/button/
 ```
 
 ```ts
-export { default } from "./button";
+export { Button } from "./button";
 ```
 
 Components that wrap DOM elements must use `forwardRef`, omit `className` from
@@ -132,8 +132,15 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
 );
 
 Button.displayName = "Button";
-export default Button;
+export { Button };
 ```
+
+## Exports
+
+- Do not add default exports. All new modules must use named exports only.
+- Do not convert existing default exports unless the requested change requires
+  touching that module's public API. New or changed imports must use named
+  exports where the target module provides them.
 
 ## Code, styling, and accessibility
 

@@ -4,7 +4,7 @@ import { describe, expect, it } from "vitest";
 import App from "./app";
 
 describe("App", () => {
-  it("renders the production explorer dashboard", () => {
+  it("renders the production explorer dashboard", async () => {
     render(<App />);
 
     expect(screen.getByRole("main")).toBeInTheDocument();
@@ -15,7 +15,7 @@ describe("App", () => {
     ).toBeInTheDocument();
     expect(screen.getByRole("form", { name: "Filters" })).toBeInTheDocument();
     expect(
-      screen.getByText("Choose a product to see the production map."),
+      await screen.findByText("Choose a product to color the map."),
     ).toBeInTheDocument();
   });
 
@@ -29,9 +29,7 @@ describe("App", () => {
     );
 
     expect(
-      screen.getByText(
-        "The map will show Coffee production for the active filters.",
-      ),
+      await screen.findByText("Showing Coffee production across countries."),
     ).toBeInTheDocument();
   });
 });

@@ -4,10 +4,15 @@ import ProductionFilters from "../production-filters";
 import ProductionSummary from "../production-summary";
 
 const ProductionAnnualChart = lazy(() => import("../production-annual-chart"));
+const ProductionMap = lazy(async () => {
+  const { ProductionMap: ProductionMapComponent } =
+    await import("../production-map");
+
+  return { default: ProductionMapComponent };
+});
 
 const ProductionExplorerDashboard = forwardRef<HTMLDivElement>((_, ref) => {
   const explorer = useProductionExplorer();
-  const productName = explorer.selectedProduct?.name ?? null;
 
   return (
     <div
@@ -31,19 +36,25 @@ const ProductionExplorerDashboard = forwardRef<HTMLDivElement>((_, ref) => {
       <ProductionFilters explorer={explorer} />
 
       <div className="grid gap-6 lg:grid-cols-[minmax(0,1.6fr)_minmax(18rem,1fr)]">
-        <section
-          aria-labelledby="map-heading"
-          className="min-h-80 rounded-xl border border-dashed border-slate-600 bg-slate-900/70 p-6"
+        <Suspense
+          fallback={
+            <section
+              aria-busy="true"
+              aria-labelledby="map-heading"
+              className="min-h-80 rounded-xl border border-slate-700 bg-slate-900 p-6"
+            >
+              <h2 id="map-heading" className="text-lg font-semibold text-white">
+                Production map
+              </h2>
+              <p className="mt-2 text-sm text-slate-300">Loading map data…</p>
+            </section>
+          }
         >
-          <h2 id="map-heading" className="text-lg font-semibold text-white">
-            Production map
-          </h2>
-          <p className="mt-2 text-sm text-slate-300">
-            {productName === null
-              ? "Choose a product to see the production map."
-              : `The map will show ${productName} production for the active filters.`}
-          </p>
-        </section>
+          <ProductionMap
+            countryTotals={explorer.countryTotals}
+            selectedProduct={explorer.selectedProduct}
+          />
+        </Suspense>
 
         <ProductionSummary summary={explorer.summary} />
       </div>
