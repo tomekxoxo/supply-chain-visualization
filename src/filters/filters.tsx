@@ -1,6 +1,6 @@
 import { forwardRef, type ChangeEvent, type FormEvent } from "react";
-import Button from "ui/button";
-import Select from "ui/select";
+import { Button } from "ui/button";
+import { Select } from "ui/select";
 import type { ProductionExplorer } from "hooks";
 
 interface ProductionFiltersProps {
@@ -158,4 +158,4 @@ const ProductionFilters = forwardRef<HTMLFormElement, ProductionFiltersProps>(
 
 ProductionFilters.displayName = "ProductionFilters";
 
-export default ProductionFilters;
+export { ProductionFilters };

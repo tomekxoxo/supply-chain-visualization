@@ -1,6 +1,6 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
-import ProductionAnnualChart from "./annual-chart";
+import { ProductionAnnualChart } from "./annual-chart";
 
 describe("ProductionAnnualChart", () => {
   it("provides an accessible annual data table", () => {

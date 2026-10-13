@@ -1,1 +1,1 @@
-export { default } from "./annual-chart";
+export { ProductionAnnualChart } from "./annual-chart";

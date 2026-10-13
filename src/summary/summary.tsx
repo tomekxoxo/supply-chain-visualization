@@ -64,4 +64,4 @@ const ProductionSummary = forwardRef<HTMLElement, ProductionSummaryProps>(
 
 ProductionSummary.displayName = "ProductionSummary";
 
-export default ProductionSummary;
+export { ProductionSummary };

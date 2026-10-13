@@ -1,5 +1,5 @@
 import { forwardRef } from "react";
-import ProductionExplorerDashboard from "./dashboard";
+import { ProductionExplorerDashboard } from "./dashboard";
 
 const App = forwardRef<HTMLElement>((_, ref) => (
   <main ref={ref} className="min-h-screen bg-canvas">
@@ -9,4 +9,4 @@ const App = forwardRef<HTMLElement>((_, ref) => (
 
 App.displayName = "App";
 
-export default App;
+export { App };

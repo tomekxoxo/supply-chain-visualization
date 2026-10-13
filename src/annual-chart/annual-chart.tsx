@@ -109,4 +109,4 @@ const ProductionAnnualChart = forwardRef<
 
 ProductionAnnualChart.displayName = "ProductionAnnualChart";
 
-export default ProductionAnnualChart;
+export { ProductionAnnualChart };

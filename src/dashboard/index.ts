@@ -1,1 +1,1 @@
-export { default } from "./dashboard";
+export { ProductionExplorerDashboard } from "./dashboard";

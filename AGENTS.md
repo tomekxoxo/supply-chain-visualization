@@ -62,7 +62,7 @@ src/
 Use aliases instead of deep relative imports:
 
 ```ts
-import Button from "ui/button";
+import { Button } from "ui/button";
 import { getProductionMapData } from "data";
 import { useProductionExplorer } from "hooks";
 ```

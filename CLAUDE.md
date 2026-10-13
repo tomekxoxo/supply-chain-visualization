@@ -71,13 +71,13 @@ src/ui/button/
 ```
 
 ```ts
-export { default } from "./button";
+export { Button } from "./button";
 ```
 
 Use aliases rather than deep relative imports:
 
 ```ts
-import Button from "ui/button";
+import { Button } from "ui/button";
 import { useProductionExplorer } from "hooks";
 ```
 

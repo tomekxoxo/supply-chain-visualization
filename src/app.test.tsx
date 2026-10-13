@@ -1,9 +1,9 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
-import App from "./app";
+import { App } from "./app";
 
 vi.mock("./dashboard", () => ({
-  default: () => (
+  ProductionExplorerDashboard: () => (
     <section aria-labelledby="dashboard-heading">
       <h1 id="dashboard-heading">Production across global supply chains</h1>
     </section>

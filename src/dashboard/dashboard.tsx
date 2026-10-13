@@ -1,9 +1,14 @@
 import { forwardRef, lazy, Suspense } from "react";
 import { useProductionExplorer } from "hooks";
-import ProductionFilters from "../filters";
-import ProductionSummary from "../summary";
+import { ProductionFilters } from "../filters";
+import { ProductionSummary } from "../summary";
 
-const ProductionAnnualChart = lazy(() => import("../annual-chart"));
+const ProductionAnnualChart = lazy(async () => {
+  const { ProductionAnnualChart: ProductionAnnualChartComponent } =
+    await import("../annual-chart");
+
+  return { default: ProductionAnnualChartComponent };
+});
 const ProductionMap = lazy(async () => {
   const { ProductionMap: ProductionMapComponent } = await import("../map");
 
@@ -93,4 +98,4 @@ const ProductionExplorerDashboard = forwardRef<HTMLDivElement>((_, ref) => {
 
 ProductionExplorerDashboard.displayName = "ProductionExplorerDashboard";
 
-export default ProductionExplorerDashboard;
+export { ProductionExplorerDashboard };

@@ -1,6 +1,6 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
-import ProductionSummary from "./summary";
+import { ProductionSummary } from "./summary";
 
 describe("ProductionSummary", () => {
   it("renders each metric with its unit", () => {
