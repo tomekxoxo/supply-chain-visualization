@@ -97,6 +97,7 @@ Zakończone i zweryfikowane:
 - [x] **Domena** — typy, deterministyczne dane testowe 2010–2026, selektory, reduktor filtrów oraz testy jednostkowe.
 - [x] **Stan funkcji** — `useProductionExplorer` łączy dane, selektory i reduktor w jedno API dla interfejsu.
 - [x] **Filtry** — atomy `Button` i `Select`, domenowy `ProductionFilters`, wybór kraju/produktu/lat, reset oraz testy komponentowe.
+- [x] **Integracja i E2E** — Playwright obejmuje wybór kraj → produkt, produkt → kraj, inkluzywny zakres lat oraz reset. Testy wyłączają WebGL przed otwarciem strony, więc nie zależą od renderowania MapLibre.
 
 Po tych etapach jest 14 testów Vitest. Ostatnio przeszły: `yarn format:check`, `yarn lint`, `yarn tsc -b`, `yarn test` i `yarn build`.
 
@@ -131,7 +132,7 @@ Po tych etapach jest 14 testów Vitest. Ostatnio przeszły: `yarn format:check`,
    - Dodać obsługę błędu inicjalizacji oraz testy logiki niezależne od MapLibre.
    - Sugerowany commit: `feat(production-explorer): add map selection and tooltips`.
 
-6. **Integracja i E2E**
+6. [x] **Integracja i E2E**
    - Rozszerzyć Playwright o kraj→produkt, produkt→kraj, zmianę zakresu oraz reset.
    - Nie asertywować zewnętrznych kafelków ani renderowania silnika mapy; testować zachowanie filtrów i widoczne dane.
    - Sugerowany commit: `test(e2e): cover production explorer flows`.
