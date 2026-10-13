@@ -8,7 +8,7 @@ export default defineConfig(() => {
       port: 3000,
     },
     resolve: {
-      // Path aliases (app/*, components/*, hooks/*) come from tsconfig.app.json
+      // Path aliases come from tsconfig.app.json.
       tsconfigPaths: true,
     },
   };

@@ -9,7 +9,7 @@ authoritative operational guide; use `BUGBOT.md` for diagnosis work.
 | Area            | Choice                                   |
 | --------------- | ---------------------------------------- |
 | Runtime         | Node.js 22.22.1 or newer                 |
-| Package manager | npm with `package-lock.json`             |
+| Package manager | Yarn with `yarn.lock`                    |
 | UI              | React 19                                 |
 | Build tool      | Vite 8                                   |
 | Language        | TypeScript 7, strict mode                |
@@ -18,16 +18,19 @@ authoritative operational guide; use `BUGBOT.md` for diagnosis work.
 | Formatting      | Oxfmt                                    |
 | Commit checks   | Husky, lint-staged, Commitlint           |
 
-`yarn.lock` is a legacy file. Use npm and synchronize dependency changes with
-`package-lock.json` only unless the user explicitly asks to migrate managers.
+Use Yarn for dependency changes. Do not create or update `package-lock.json`.
 
 ## Key files
 
 ```text
-src/app/app.tsx              Main application component
+src/app.tsx                  Main application component
 src/main.tsx                 Application entry point
 src/index.css                Tailwind v4 configuration and global CSS
-src/components/              Atomic Design components
+src/ui/                      Application-local visual primitives
+src/dashboard/               Main dashboard composition
+src/data/                    Deterministic data
+src/hooks/                   React hooks
+src/model/                   Types, selectors, and reducer
 tsconfig.app.json            Strict TypeScript and path aliases
 vite.config.ts               Vite server and alias integration
 .oxlintrc.json               Oxlint rules
@@ -39,48 +42,43 @@ lint-staged.config.js        Staged-file quality commands
 ## Commands
 
 ```bash
-npm install
+yarn install
 yarn dev
-npm run build
-npm run lint
-npm run lint:fix
-npm run format
-npm run format:check
-npm run preview
-npx tsc -b
+yarn build
+yarn lint
+yarn lint:fix
+yarn format
+yarn format:check
+yarn preview
+yarn tsc -b
 ```
 
-`npm run build` performs `tsc -b` plus the Vite production build. Plain root
+`yarn build` performs `tsc -b` plus the Vite production build. Plain root
 `tsc` has no project to compile because the repository uses project references.
 
 ## Architecture and imports
 
-Components live under `src/components` and use Atomic Design:
-
-- `atoms`: reusable single-purpose elements.
-- `molecules`: small groups of atoms.
-- `organisms`: complex domain-specific sections.
-- `templates`: reusable page structure.
-- `pages`: concrete pages when introduced.
+This is a single application, so modules live directly in `src/`. Small visual
+primitives live in `src/ui/`; dashboard, filters, map, chart, summary, data,
+hooks, and model each own their respective concerns.
 
 Each component directory is kebab-case and provides a barrel export:
 
 ```text
-src/components/atoms/status-badge/
-  status-badge.tsx
+src/ui/button/
+  button.tsx
   index.ts
 ```
 
 ```ts
-export { default } from "./status-badge";
+export { default } from "./button";
 ```
 
 Use aliases rather than deep relative imports:
 
 ```ts
-import App from "app/app";
-import StatusBadge from "components/atoms/status-badge";
-import { useStatus } from "hooks/useStatus";
+import Button from "ui/button";
+import { useProductionExplorer } from "hooks";
 ```
 
 ## TypeScript, styling, and accessibility
@@ -101,12 +99,12 @@ source(".")`. Do not add `tailwind.config.js` for routine changes.
 Use these checks for non-trivial changes:
 
 ```bash
-npm run lint
-npm run format:check
-npm run build
+yarn lint
+yarn format:check
+yarn build
 ```
 
-Husky is installed by `npm install` through the `prepare` script:
+Husky is installed by `yarn install` through the `prepare` script:
 
 - `pre-commit` runs `lint-staged` (Oxlint, Oxfmt, then `tsc -b`).
 - `commit-msg` runs Commitlint.
@@ -114,7 +112,7 @@ Husky is installed by `npm install` through the `prepare` script:
 Commit messages use Conventional Commits:
 
 ```text
-feat(organisms): add supplier overview card
+feat(ui): add status badge
 fix: preserve focus after filter change
 docs: document local setup
 ```

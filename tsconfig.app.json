@@ -26,11 +26,13 @@
 
     /* Paths */
     "paths": {
-      "app/*": ["./src/app/*"],
-      "components/*": ["./src/components/*"],
-      "production-explorer": ["./src/production-explorer/index.ts"],
-      "production-explorer/*": ["./src/production-explorer/*"],
-      "hooks/*": ["./src/hooks/*"]
+      "ui/*": ["./src/ui/*"],
+      "data": ["./src/data/index.ts"],
+      "data/*": ["./src/data/*"],
+      "hooks": ["./src/hooks/index.ts"],
+      "hooks/*": ["./src/hooks/*"],
+      "model": ["./src/model/index.ts"],
+      "model/*": ["./src/model/*"]
     }
   },
   "include": ["src"]

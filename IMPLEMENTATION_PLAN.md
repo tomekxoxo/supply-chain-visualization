@@ -9,7 +9,7 @@ Użytkownik może rozpocząć wybór od kraju lub produktu; drugi filtr pokazuje
 ## Ustalenia zgodne z repozytorium
 
 - React, TypeScript, Vite i Tailwind CSS pozostają podstawą aplikacji.
-- Stosujemy **Atomic Design** dla współdzielonych komponentów w `components/`. To aplikacja z jedną domeną, dlatego jej logika i interfejs należą do `production-explorer/`, bez sztucznego katalogu `features/`.
+- To pojedyncza, zakończona aplikacja. Moduły interfejsu, danych, modelu i hooków znajdują się bezpośrednio w `src/`; małe prymitywy wizualne są lokalne w `ui/`.
 - Lintowanie i formatowanie realizują odpowiednio **Oxlint** i **Oxfmt**. Nie dodajemy ESLint ani Prettier.
 - Pakiety instaluje się przez `yarn`; aktualizowany jest `yarn.lock`.
 - Do testów używamy Vitest, React Testing Library i Playwright.
@@ -23,19 +23,17 @@ e2e/
   support/                     # współdzielone page objects Playwright
 
 src/
-  app/                         # kompozycja aplikacji i strony
-  components/
-    atoms/                     # pojedyncze, wielokrotnego użytku elementy
-    molecules/                 # małe kompozycje atomów
-    organisms/                 # sekcje domenowe, np. filtry i mapa
-    templates/                 # układy stron bez konkretnych danych
-  hooks/                       # współdzielone hooki React
-  production-explorer/
-    data/                      # deterministyczne dane testowe
-    model/                     # typy, selektory i reduktor filtrów
-    hooks/                     # hooki specyficzne dla eksploratora
-    components/                # filtry, mapa i podsumowania specyficzne dla domeny
-  test/                        # współdzielona konfiguracja testów
+  app.tsx                      # kompozycja aplikacji
+  ui/                           # lokalne prymitywy wizualne
+  dashboard/                    # główna kompozycja widoku
+  filters/                      # kontrolki filtrowania
+  map/                          # renderowanie i interakcje mapy
+  annual-chart/                 # wykres produkcji rocznej
+  summary/                      # podsumowanie produkcji
+  data/                         # deterministyczne dane testowe
+  hooks/                        # hooki React
+  model/                        # typy, selektory i reduktor filtrów
+  test/                         # współdzielona konfiguracja testów
   main.tsx
 ```
 
@@ -43,7 +41,7 @@ Komponenty umieszczamy w katalogach kebab-case i eksportujemy przez `index.ts`. 
 
 Testy E2E są organizowane według zachowania domeny w `e2e/production-explorer/`. Wspólne lokatory i akcje Playwright trafiają do `e2e/support/`, gdy są używane przez więcej niż jeden scenariusz.
 
-Granica architektury jest jednokierunkowa: `production-explorer/*` może korzystać z `components/*`, lecz współdzielone `components/*` nie importują z domeny. Komponent pozostaje w domenie, dopóki nie jest użyteczny bez jej modelu danych.
+Moduły mogą korzystać z lokalnych prymitywów z `ui/*`. Nie utrzymujemy granicy feature ani katalogu współdzielonych komponentów, ponieważ aplikacja ma zakończony, pojedynczy zakres.
 
 Logika filtrowania i agregacji pozostaje poza komponentami prezentacyjnymi. Nie przechowujemy wartości pochodnych w stanie React.
 
@@ -93,7 +91,7 @@ yarn build
 
 Zakończone i zweryfikowane:
 
-- [x] **Przygotowanie** — Yarn 1.22.22 jest przypięty w `package.json`; alias `production-explorer/*` działa w TypeScript, Vite i Vitest; test setup czyści DOM po każdym teście.
+- [x] **Przygotowanie** — Yarn 1.22.22 jest przypięty w `package.json`; aliasy `ui/*`, `data`, `hooks` i `model` działają w TypeScript, Vite i Vitest; test setup czyści DOM po każdym teście.
 - [x] **Domena** — typy, deterministyczne dane testowe 2010–2026, selektory, reduktor filtrów oraz testy jednostkowe.
 - [x] **Stan funkcji** — `useProductionExplorer` łączy dane, selektory i reduktor w jedno API dla interfejsu.
 - [x] **Filtry** — atomy `Button` i `Select`, domenowy `ProductionFilters`, wybór kraju/produktu/lat, reset oraz testy komponentowe.

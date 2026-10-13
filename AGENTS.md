@@ -21,8 +21,8 @@ repository. Read it before making changes. Use `BUGBOT.md` for diagnosis and
 - Node.js 22.22.1 or later is required.
 - TypeScript is strict and uses project references. Use `yarn tsc -b` or
   `yarn build`, never plain root-level `tsc`.
-- The UI uses Atomic Design for shared UI. This is a single-domain application,
-  so domain-specific logic and UI live in `production-explorer/`.
+- This is a single application. Its modules live directly in `src/`; no
+  feature or shared-component boundary is needed.
 - Tailwind v4 configuration lives in `src/index.css`, not `tailwind.config.js`.
 
 ## Commands
@@ -46,24 +46,25 @@ For a normal application change, run `yarn lint`, `yarn format:check`, and
 
 ```text
 src/
-  app/                 # App composition and pages
-  components/
-    atoms/             # Shared, reusable visual primitives
-    molecules/         # Shared, small compositions of atoms
-    organisms/         # Shared, complex UI sections
-    templates/         # Shared page layouts
-  hooks/               # Custom React hooks
-  production-explorer/ # Application domain: data, model, hooks, and UI
-  index.css            # Tailwind v4 and global styles
+  app.tsx                # App composition
+  ui/                    # Application-local visual primitives
+  dashboard/             # Main dashboard composition
+  filters/               # Filter controls
+  map/                   # Map rendering and interactions
+  annual-chart/          # Annual production chart
+  summary/               # Production summary
+  data/                  # Deterministic test data
+  hooks/                 # React hooks
+  model/                 # Types, selectors, and reducer
+  index.css              # Tailwind v4 and global styles
 ```
 
 Use aliases instead of deep relative imports:
 
 ```ts
-import App from "app/app";
-import Button from "components/atoms/button";
-import { ProductionMap } from "production-explorer/components/production-map";
-import { useExample } from "hooks/useExample";
+import Button from "ui/button";
+import { getProductionMapData } from "data";
+import { useProductionExplorer } from "hooks";
 ```
 
 Aliases are defined in `tsconfig.app.json` and read by Vite. Keep the `./`
@@ -72,19 +73,11 @@ prefix in their path values: TypeScript 7 no longer supports the old
 
 ## Architecture and components
 
-Use the architecture consistently:
+Keep application components, state, selectors, data, and hooks in their
+top-level `src/` modules. `app.tsx` composes the dashboard and does not own
+business logic.
 
-- Put reusable, domain-agnostic UI in `components/`, at the lowest suitable
-  Atomic Design level.
-- Put domain-specific components, state, selectors, data, and hooks in
-  `production-explorer/`. Domain code may compose shared components, but shared
-  components must not import from `production-explorer/`.
-- Move a domain component to `components/` only after it is genuinely
-  reusable without its domain model.
-- Pages in `app/` compose domain components and templates; they do not own
-  business logic.
-
-Choose the lowest suitable Atomic Design level:
+Use the lowest suitable Atomic Design level for application-local UI:
 
 - **Atom**: standalone control or visual primitive.
 - **Molecule**: two or three atoms with one focused purpose.
@@ -95,7 +88,7 @@ Choose the lowest suitable Atomic Design level:
 Put each component in a kebab-case directory and expose it through `index.ts`:
 
 ```text
-src/components/atoms/button/
+src/ui/button/
   button.tsx
   index.ts
 ```
