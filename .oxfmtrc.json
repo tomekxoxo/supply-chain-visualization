@@ -1,6 +1,6 @@
 {
   "$schema": "./node_modules/oxfmt/configuration_schema.json",
-  // Migrated from Prettier (no config, so Prettier 3 defaults) with `oxfmt --migrate=prettier`
+  "ignorePatterns": ["src/data/world-countries.geo.json"],
   "printWidth": 80,
   "sortPackageJson": false
 }

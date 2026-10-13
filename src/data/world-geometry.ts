@@ -1,14 +1,17 @@
-import { feature } from "topojson-client";
 import type { FeatureCollection, Geometry } from "geojson";
-import type { Topology } from "topojson-specification";
-import countriesTopology from "world-atlas/countries-110m.json";
 import type { CountryCode, CountryProductionTotal } from "model";
+import worldCountriesData from "./world-countries.geo.json";
 
 interface WorldCountryProperties {
   intensity: number | null;
   iso3: CountryCode | null;
   name?: string;
   value: number | null;
+}
+
+interface WorldCountryGeometryProperties {
+  id: string;
+  name?: string;
 }
 
 export type ProductionMapData = FeatureCollection<
@@ -25,32 +28,10 @@ const countryCodeByNumericId: Readonly<Record<string, CountryCode>> = {
   "840": "USA",
 };
 
-const topology = countriesTopology as unknown as Topology;
-const countries = feature(
-  topology,
-  topology.objects.countries,
-) as FeatureCollection;
-
-const getIso3CountryCode = (
-  id: string | number | undefined,
-): CountryCode | null => {
-  if (id === undefined) {
-    return null;
-  }
-
-  return countryCodeByNumericId[String(id).padStart(3, "0")] ?? null;
-};
-
-const worldCountries = countries.features.map(
-  ({ geometry, id, properties }) => ({
-    geometry,
-    properties: {
-      iso3: getIso3CountryCode(id),
-      name: typeof properties?.name === "string" ? properties.name : undefined,
-    },
-    type: "Feature" as const,
-  }),
-);
+const worldCountries = worldCountriesData as FeatureCollection<
+  Geometry,
+  WorldCountryGeometryProperties
+>;
 
 export const getProductionMapData = (
   countryTotals: readonly CountryProductionTotal[],
@@ -61,22 +42,21 @@ export const getProductionMapData = (
   const maximumValue = Math.max(...countryTotals.map(({ value }) => value), 0);
 
   return {
-    features: worldCountries.map(({ geometry, properties }) => {
-      const value =
-        properties.iso3 === null
-          ? undefined
-          : valueByCountry.get(properties.iso3);
+    features: worldCountries.features.map(({ geometry, properties }) => {
+      const iso3 = countryCodeByNumericId[properties.id] ?? null;
+      const value = iso3 === null ? undefined : valueByCountry.get(iso3);
 
       return {
         geometry,
         properties: {
-          ...properties,
           intensity:
             value === undefined
               ? null
               : maximumValue === 0
                 ? 0
                 : value / maximumValue,
+          iso3,
+          name: properties.name,
           value: value ?? null,
         },
         type: "Feature" as const,
