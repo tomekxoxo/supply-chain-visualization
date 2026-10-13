@@ -27,12 +27,12 @@ const ProductionAnnualChart = forwardRef<
       <section
         ref={ref}
         aria-labelledby="chart-heading"
-        className="min-h-56 rounded-xl border border-slate-700 bg-slate-900 p-6"
+        className="min-h-56 rounded-xl border border-border bg-surface p-6"
       >
-        <h2 id="chart-heading" className="text-lg font-semibold text-white">
+        <h2 id="chart-heading" className="text-lg font-semibold text-heading">
           Annual production
         </h2>
-        <p className="mt-2 text-sm text-slate-300" role="status">
+        <p className="mt-2 text-sm text-text-secondary" role="status">
           No annual production data is available for the active filters.
         </p>
       </section>
@@ -45,12 +45,12 @@ const ProductionAnnualChart = forwardRef<
     <section
       ref={ref}
       aria-labelledby="chart-heading"
-      className="min-h-80 rounded-xl border border-slate-700 bg-slate-900 p-6"
+      className="min-h-80 rounded-xl border border-border bg-surface p-6"
     >
-      <h2 id="chart-heading" className="text-lg font-semibold text-white">
+      <h2 id="chart-heading" className="text-lg font-semibold text-heading">
         Annual production
       </h2>
-      <p className="mt-1 text-sm text-slate-300">
+      <p className="mt-1 text-sm text-text-secondary">
         Production volume in {unit} for the active filters.
       </p>
       <div className="mt-4 h-64" data-testid="annual-production-chart">
@@ -59,10 +59,13 @@ const ProductionAnnualChart = forwardRef<
             data={data}
             margin={{ bottom: 8, left: 12, right: 12, top: 12 }}
           >
-            <CartesianGrid stroke="#475569" strokeDasharray="3 3" />
-            <XAxis dataKey="year" stroke="#cbd5e1" />
+            <CartesianGrid
+              stroke="var(--color-chart-grid)"
+              strokeDasharray="3 3"
+            />
+            <XAxis dataKey="year" stroke="var(--color-chart-axis)" />
             <YAxis
-              stroke="#cbd5e1"
+              stroke="var(--color-chart-axis)"
               tickFormatter={(value) => numberFormatter.format(Number(value))}
             />
             <Tooltip
@@ -75,7 +78,7 @@ const ProductionAnnualChart = forwardRef<
               dataKey="value"
               dot={false}
               name="Production"
-              stroke="#60a5fa"
+              stroke="var(--color-chart-series)"
               strokeWidth={2}
               type="monotone"
             />

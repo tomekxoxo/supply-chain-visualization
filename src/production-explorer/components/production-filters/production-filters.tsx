@@ -48,18 +48,20 @@ const ProductionFilters = forwardRef<HTMLFormElement, ProductionFiltersProps>(
       <form
         ref={ref}
         aria-labelledby="filters-heading"
-        className="rounded-xl border border-slate-700 bg-slate-900 p-5 shadow-lg"
+        className="rounded-xl border border-border bg-surface p-5 shadow-lg"
         onSubmit={handleSubmit}
       >
         <div className="mb-4 flex flex-wrap items-baseline justify-between gap-2">
           <div>
             <h2
               id="filters-heading"
-              className="text-lg font-semibold text-white"
+              className="text-lg font-semibold text-heading"
             >
               Filters
             </h2>
-            <p className="text-sm text-slate-300">Test data for 2010–2026.</p>
+            <p className="text-sm text-text-secondary">
+              Test data for 2010–2026.
+            </p>
           </div>
           <Button onClick={explorer.resetFilters} variant="secondary">
             Reset filters
@@ -68,7 +70,7 @@ const ProductionFilters = forwardRef<HTMLFormElement, ProductionFiltersProps>(
 
         <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
           <label
-            className="grid gap-1.5 text-sm font-medium text-slate-100"
+            className="grid gap-1.5 text-sm font-medium text-text-primary"
             htmlFor="country"
           >
             Country
@@ -93,7 +95,7 @@ const ProductionFilters = forwardRef<HTMLFormElement, ProductionFiltersProps>(
           </label>
 
           <label
-            className="grid gap-1.5 text-sm font-medium text-slate-100"
+            className="grid gap-1.5 text-sm font-medium text-text-primary"
             htmlFor="product"
           >
             Product
@@ -118,11 +120,12 @@ const ProductionFilters = forwardRef<HTMLFormElement, ProductionFiltersProps>(
           </label>
 
           <label
-            className="grid gap-1.5 text-sm font-medium text-slate-100"
+            className="grid gap-1.5 text-sm font-medium text-text-primary"
             htmlFor="year-from"
           >
             From year
             <input
+              className="block w-full rounded-md border-border-strong bg-surface px-3 py-2 text-text-primary shadow-sm focus:border-action-focus focus:ring-action-focus"
               id="year-from"
               max={2026}
               min={2010}
@@ -133,11 +136,12 @@ const ProductionFilters = forwardRef<HTMLFormElement, ProductionFiltersProps>(
           </label>
 
           <label
-            className="grid gap-1.5 text-sm font-medium text-slate-100"
+            className="grid gap-1.5 text-sm font-medium text-text-primary"
             htmlFor="year-to"
           >
             To year
             <input
+              className="block w-full rounded-md border-border-strong bg-surface px-3 py-2 text-text-primary shadow-sm focus:border-action-focus focus:ring-action-focus"
               id="year-to"
               max={2026}
               min={2010}

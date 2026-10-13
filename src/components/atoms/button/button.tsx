@@ -6,9 +6,9 @@ interface ButtonProps extends Omit<ComponentProps<"button">, "className"> {
 
 const variantClasses = {
   primary:
-    "bg-blue-500 text-white hover:bg-blue-400 focus-visible:outline-blue-300",
+    "bg-action text-heading hover:bg-action-hover focus-visible:outline-action-focus-subtle",
   secondary:
-    "border border-slate-600 bg-slate-800 text-slate-100 hover:bg-slate-700 focus-visible:outline-slate-300",
+    "border border-border-strong bg-surface-raised text-text-primary hover:bg-border focus-visible:outline-text-secondary",
 };
 
 const Button = forwardRef<HTMLButtonElement, ButtonProps>(

@@ -16,12 +16,15 @@ const ProductionSummary = forwardRef<HTMLElement, ProductionSummaryProps>(
         <section
           ref={ref}
           aria-labelledby="summary-heading"
-          className="rounded-xl border border-slate-700 bg-slate-900 p-6"
+          className="rounded-xl border border-border bg-surface p-6"
         >
-          <h2 id="summary-heading" className="text-lg font-semibold text-white">
+          <h2
+            id="summary-heading"
+            className="text-lg font-semibold text-heading"
+          >
             Production summary
           </h2>
-          <p className="mt-2 text-sm text-slate-300" role="status">
+          <p className="mt-2 text-sm text-text-secondary" role="status">
             No production data is available for the active filters.
           </p>
         </section>
@@ -39,16 +42,16 @@ const ProductionSummary = forwardRef<HTMLElement, ProductionSummaryProps>(
       <section
         ref={ref}
         aria-labelledby="summary-heading"
-        className="rounded-xl border border-slate-700 bg-slate-900 p-6"
+        className="rounded-xl border border-border bg-surface p-6"
       >
-        <h2 id="summary-heading" className="text-lg font-semibold text-white">
+        <h2 id="summary-heading" className="text-lg font-semibold text-heading">
           Production summary
         </h2>
         <dl className="mt-4 grid gap-3 sm:grid-cols-2">
           {metrics.map(({ label, value }) => (
-            <div key={label} className="rounded-lg bg-slate-800 p-3">
-              <dt className="text-sm text-slate-300">{label}</dt>
-              <dd className="mt-1 text-lg font-semibold text-white">
+            <div key={label} className="rounded-lg bg-surface-raised p-3">
+              <dt className="text-sm text-text-secondary">{label}</dt>
+              <dd className="mt-1 text-lg font-semibold text-heading">
                 {numberFormatter.format(value)} {summary.unit}
               </dd>
             </div>

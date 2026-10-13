@@ -2,7 +2,7 @@ import { forwardRef } from "react";
 import { ProductionExplorerDashboard } from "production-explorer";
 
 const App = forwardRef<HTMLElement>((_, ref) => (
-  <main ref={ref} className="min-h-screen bg-slate-950">
+  <main ref={ref} className="min-h-screen bg-canvas">
     <ProductionExplorerDashboard />
   </main>
 ));

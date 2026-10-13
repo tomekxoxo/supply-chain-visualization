@@ -27,57 +27,71 @@ interface ProductionMapProps {
   selectedProduct: Product | null;
 }
 
-const createMapStyle = (): StyleSpecification => ({
-  layers: [
-    {
-      id: "background",
-      paint: { "background-color": "#0f172a" },
-      type: "background",
-    },
-    {
-      id: "countries-fill",
-      paint: {
-        "fill-color": [
-          "case",
-          ["==", ["get", "intensity"], null],
-          "#334155",
-          [
-            "interpolate",
-            ["linear"],
-            ["get", "intensity"],
-            0,
-            "#dbeafe",
-            1,
-            "#2563eb",
-          ],
-        ],
-        "fill-opacity": 0.9,
+const getMapColor = (token: string): string =>
+  getComputedStyle(document.documentElement).getPropertyValue(token).trim();
+
+const createMapStyle = (): StyleSpecification => {
+  const colors = {
+    background: getMapColor("--color-map-background"),
+    high: getMapColor("--color-map-high"),
+    low: getMapColor("--color-map-low"),
+    noData: getMapColor("--color-map-no-data"),
+    outline: getMapColor("--color-map-outline"),
+    selection: getMapColor("--color-map-selection"),
+  };
+
+  return {
+    layers: [
+      {
+        id: "background",
+        paint: { "background-color": colors.background },
+        type: "background",
       },
-      source: "countries",
-      type: "fill",
+      {
+        id: "countries-fill",
+        paint: {
+          "fill-color": [
+            "case",
+            ["==", ["get", "intensity"], null],
+            colors.noData,
+            [
+              "interpolate",
+              ["linear"],
+              ["get", "intensity"],
+              0,
+              colors.low,
+              1,
+              colors.high,
+            ],
+          ],
+          "fill-opacity": 0.9,
+        },
+        source: "countries",
+        type: "fill",
+      },
+      {
+        id: "countries-outline",
+        paint: { "line-color": colors.outline, "line-width": 0.5 },
+        source: "countries",
+        type: "line",
+      },
+      {
+        filter: ["==", ["get", "iso3"], ""],
+        id: "countries-selected",
+        paint: { "line-color": colors.selection, "line-width": 2.5 },
+        source: "countries",
+        type: "line",
+      },
+    ],
+    sources: {
+      countries: {
+        data: getProductionMapData([]),
+        type: "geojson",
+      },
     },
-    {
-      id: "countries-outline",
-      paint: { "line-color": "#94a3b8", "line-width": 0.5 },
-      source: "countries",
-      type: "line",
-    },
-    {
-      filter: ["==", ["get", "iso3"], ""],
-      id: "countries-selected",
-      paint: { "line-color": "#c084fc", "line-width": 2.5 },
-      source: "countries",
-      type: "line",
-    },
-  ],
-  sources: {
-    countries: {
-      data: getProductionMapData([]),
-      type: "geojson",
-    },
-  },
-  version: 8,
-});
+    version: 8,
+  };
+};
 
 const hasWebGLSupport = (): boolean => {
   if (navigator.userAgent.includes("jsdom")) {
@@ -242,7 +256,7 @@ const ProductionMap = forwardRef<HTMLElement, ProductionMapProps>(
 
         removePopup();
         const tooltip = document.createElement("p");
-        tooltip.className = "m-0 text-sm text-slate-900";
+        tooltip.className = "m-0 text-sm text-text-inverse";
         tooltip.textContent = getMapTooltipText({
           countryName,
           period: filters.yearRange,
@@ -300,14 +314,14 @@ const ProductionMap = forwardRef<HTMLElement, ProductionMapProps>(
       <section
         ref={ref}
         aria-labelledby="map-heading"
-        className="rounded-xl border border-slate-700 bg-slate-900 p-6"
+        className="rounded-xl border border-border bg-surface p-6"
       >
         <div className="flex flex-wrap items-baseline justify-between gap-2">
           <div>
-            <h2 id="map-heading" className="text-lg font-semibold text-white">
+            <h2 id="map-heading" className="text-lg font-semibold text-heading">
               Production map
             </h2>
-            <p className="mt-1 text-sm text-slate-300">
+            <p className="mt-1 text-sm text-text-secondary">
               {selectedProduct === null
                 ? "Choose a product to color the map."
                 : `Showing ${selectedProduct.name} production across countries.`}
@@ -315,26 +329,26 @@ const ProductionMap = forwardRef<HTMLElement, ProductionMapProps>(
           </div>
           <div
             aria-label="Production map legend"
-            className="flex items-center gap-2 text-xs text-slate-300"
+            className="flex items-center gap-2 text-xs text-text-secondary"
           >
-            <span className="h-3 w-3 rounded-sm bg-slate-600" />
+            <span className="h-3 w-3 rounded-sm bg-map-no-data" />
             No data
-            <span className="h-3 w-3 rounded-sm bg-blue-200" />
+            <span className="h-3 w-3 rounded-sm bg-map-low" />
             Lower production
-            <span className="h-3 w-3 rounded-sm bg-blue-600" />
+            <span className="h-3 w-3 rounded-sm bg-map-high" />
             Higher production
           </div>
         </div>
 
         {mapError ? (
-          <p className="mt-4 text-sm text-slate-300" role="status">
+          <p className="mt-4 text-sm text-text-secondary" role="status">
             The production map is not available in this browser.
           </p>
         ) : (
           <div ref={containerRef} className="mt-4 h-96 w-full" />
         )}
 
-        <p className="mt-3 text-xs text-slate-400">
+        <p className="mt-3 text-xs text-text-muted">
           Geometry: Natural Earth, distributed by world-atlas.
         </p>
       </section>

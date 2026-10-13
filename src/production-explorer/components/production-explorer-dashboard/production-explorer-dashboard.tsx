@@ -20,14 +20,14 @@ const ProductionExplorerDashboard = forwardRef<HTMLDivElement>((_, ref) => {
       className="mx-auto flex w-full max-w-7xl flex-col gap-6 px-4 py-8 sm:px-6 lg:px-8"
     >
       <header className="space-y-3">
-        <p className="text-sm font-semibold tracking-[0.2em] text-purple-300 uppercase">
+        <p className="text-sm font-semibold tracking-[0.2em] text-brand uppercase">
           Supply Chain Explorer
         </p>
         <div className="max-w-3xl space-y-2">
-          <h1 className="text-3xl font-bold tracking-tight text-white sm:text-4xl">
+          <h1 className="text-3xl font-bold tracking-tight text-heading sm:text-4xl">
             Production across global supply chains
           </h1>
-          <p className="text-base text-slate-300 sm:text-lg">
+          <p className="text-base text-text-secondary sm:text-lg">
             Explore deterministic test data by country, product, and year range.
           </p>
         </div>
@@ -41,12 +41,17 @@ const ProductionExplorerDashboard = forwardRef<HTMLDivElement>((_, ref) => {
             <section
               aria-busy="true"
               aria-labelledby="map-heading"
-              className="min-h-80 rounded-xl border border-slate-700 bg-slate-900 p-6"
+              className="min-h-80 rounded-xl border border-border bg-surface p-6"
             >
-              <h2 id="map-heading" className="text-lg font-semibold text-white">
+              <h2
+                id="map-heading"
+                className="text-lg font-semibold text-heading"
+              >
                 Production map
               </h2>
-              <p className="mt-2 text-sm text-slate-300">Loading map data…</p>
+              <p className="mt-2 text-sm text-text-secondary">
+                Loading map data…
+              </p>
             </section>
           }
         >
@@ -67,12 +72,17 @@ const ProductionExplorerDashboard = forwardRef<HTMLDivElement>((_, ref) => {
           <section
             aria-busy="true"
             aria-labelledby="chart-heading"
-            className="min-h-56 rounded-xl border border-slate-700 bg-slate-900 p-6"
+            className="min-h-56 rounded-xl border border-border bg-surface p-6"
           >
-            <h2 id="chart-heading" className="text-lg font-semibold text-white">
+            <h2
+              id="chart-heading"
+              className="text-lg font-semibold text-heading"
+            >
               Annual production
             </h2>
-            <p className="mt-2 text-sm text-slate-300">Loading chart data…</p>
+            <p className="mt-2 text-sm text-text-secondary">
+              Loading chart data…
+            </p>
           </section>
         }
       >
