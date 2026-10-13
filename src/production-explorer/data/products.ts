@@ -1,4 +1,4 @@
-import type { Product } from "features/production-explorer/model/types";
+import type { Product } from "production-explorer/model/types";
 
 export const products: readonly Product[] = [
   { id: "coffee", name: "Coffee", unit: "tonnes" },

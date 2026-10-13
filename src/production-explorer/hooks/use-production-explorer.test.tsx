@@ -1,6 +1,6 @@
 import { act, renderHook } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
-import { useProductionExplorer } from "features/production-explorer/hooks";
+import { useProductionExplorer } from "production-explorer/hooks";
 
 describe("useProductionExplorer", () => {
   it("keeps all derived data aligned with filter changes", () => {

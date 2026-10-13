@@ -1,8 +1,5 @@
-import { countries } from "features/production-explorer/data";
-import type {
-  CountryCode,
-  ProductionUnit,
-} from "features/production-explorer/model";
+import { countries } from "production-explorer/data";
+import type { CountryCode, ProductionUnit } from "production-explorer/model";
 
 interface MapTooltipDetails {
   countryName: string;

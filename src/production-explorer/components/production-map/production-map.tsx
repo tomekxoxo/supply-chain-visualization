@@ -8,17 +8,14 @@ import type {
   MapLayerMouseEvent,
   StyleSpecification,
 } from "maplibre-gl";
-import { getProductionMapData } from "features/production-explorer/data";
+import { getProductionMapData } from "production-explorer/data";
 import type {
   CountryCode,
   CountryProductionTotal,
   Product,
   ProductionFilters,
-} from "features/production-explorer/model";
-import {
-  getCountryCode,
-  getMapTooltipText,
-} from "features/production-explorer/utils/map-interactions";
+} from "production-explorer/model";
+import { getCountryCode, getMapTooltipText } from "./map-interactions";
 
 maplibregl.setWorkerUrl(maplibreWorkerUrl);
 

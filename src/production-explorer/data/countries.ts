@@ -1,4 +1,4 @@
-import type { Country } from "features/production-explorer/model/types";
+import type { Country } from "production-explorer/model/types";
 
 export const countries: readonly Country[] = [
   { code: "BRA", name: "Brazil" },

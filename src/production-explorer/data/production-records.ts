@@ -2,7 +2,7 @@ import type {
   CountryCode,
   ProductId,
   ProductionRecord,
-} from "features/production-explorer/model/types";
+} from "production-explorer/model/types";
 
 interface ProductionSeries {
   countryCode: CountryCode;

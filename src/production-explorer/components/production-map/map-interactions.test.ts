@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { getCountryCode, getMapTooltipText } from "./map-interactions";
 
 describe("getCountryCode", () => {
-  it("returns a supported ISO3 country code only", () => {
+  it("returns only a supported ISO3 country code", () => {
     expect(getCountryCode("POL")).toBe("POL");
     expect(getCountryCode("XXX")).toBeNull();
     expect(getCountryCode(undefined)).toBeNull();

@@ -1,9 +1,9 @@
 import { describe, expect, it } from "vitest";
-import { productionRecords } from "features/production-explorer/data";
+import { productionRecords } from "production-explorer/data";
 import {
   createProductionFilterReducer,
   initialProductionFilters,
-} from "features/production-explorer/model";
+} from "production-explorer/model";
 
 const reduceFilters = createProductionFilterReducer(productionRecords);
 

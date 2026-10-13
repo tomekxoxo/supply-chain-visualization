@@ -3,8 +3,8 @@ import {
   countries,
   products,
   productionRecords,
-} from "features/production-explorer/data";
-import { PRODUCTION_YEAR_RANGE } from "features/production-explorer/model/types";
+} from "production-explorer/data";
+import { PRODUCTION_YEAR_RANGE } from "production-explorer/model/types";
 
 describe("productionRecords", () => {
   it("provides deterministic records for every year in the supported range", () => {

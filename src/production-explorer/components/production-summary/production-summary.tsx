@@ -1,5 +1,5 @@
 import { forwardRef } from "react";
-import type { ProductionSummary as ProductionSummaryData } from "features/production-explorer/model";
+import type { ProductionSummary as ProductionSummaryData } from "production-explorer/model";
 
 interface ProductionSummaryProps {
   summary: ProductionSummaryData | null;

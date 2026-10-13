@@ -8,7 +8,7 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import type { YearlyProduction } from "features/production-explorer/model";
+import type { YearlyProduction } from "production-explorer/model";
 
 interface ProductionAnnualChartProps {
   data: readonly YearlyProduction[];

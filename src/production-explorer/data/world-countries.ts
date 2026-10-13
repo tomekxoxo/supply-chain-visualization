@@ -5,7 +5,7 @@ import countriesTopology from "world-atlas/countries-110m.json";
 import type {
   CountryCode,
   CountryProductionTotal,
-} from "features/production-explorer/model";
+} from "production-explorer/model";
 
 interface WorldCountryProperties {
   intensity: number | null;

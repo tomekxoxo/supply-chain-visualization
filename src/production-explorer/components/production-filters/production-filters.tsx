@@ -1,7 +1,7 @@
 import { forwardRef, type ChangeEvent, type FormEvent } from "react";
 import Button from "components/atoms/button";
 import Select from "components/atoms/select";
-import type { ProductionExplorer } from "features/production-explorer";
+import type { ProductionExplorer } from "production-explorer";
 
 interface ProductionFiltersProps {
   explorer: Pick<

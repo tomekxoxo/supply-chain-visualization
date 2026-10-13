@@ -28,7 +28,8 @@
     "paths": {
       "app/*": ["./src/app/*"],
       "components/*": ["./src/components/*"],
-      "features/*": ["./src/features/*"],
+      "production-explorer": ["./src/production-explorer/index.ts"],
+      "production-explorer/*": ["./src/production-explorer/*"],
       "hooks/*": ["./src/hooks/*"]
     }
   },

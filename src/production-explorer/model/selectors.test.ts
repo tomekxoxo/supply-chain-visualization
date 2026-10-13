@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { products, productionRecords } from "features/production-explorer/data";
+import { products, productionRecords } from "production-explorer/data";
 import {
   filterProductionRecords,
   getAvailableCountryCodes,
@@ -9,7 +9,7 @@ import {
   getYearlyProduction,
   initialProductionFilters,
   type ProductionRecord,
-} from "features/production-explorer/model";
+} from "production-explorer/model";
 
 const wheat = products.find(({ id }) => id === "wheat") ?? null;
 

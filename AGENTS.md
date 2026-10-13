@@ -21,8 +21,8 @@ repository. Read it before making changes. Use `BUGBOT.md` for diagnosis and
 - Node.js 22.22.1 or later is required.
 - TypeScript is strict and uses project references. Use `yarn tsc -b` or
   `yarn build`, never plain root-level `tsc`.
-- The UI uses a hybrid Feature + Atomic Design architecture. Shared UI follows
-  Atomic Design; domain-specific logic and UI live with their feature.
+- The UI uses Atomic Design for shared UI. This is a single-domain application,
+  so domain-specific logic and UI live in `production-explorer/`.
 - Tailwind v4 configuration lives in `src/index.css`, not `tailwind.config.js`.
 
 ## Commands
@@ -53,8 +53,7 @@ src/
     organisms/         # Shared, complex UI sections
     templates/         # Shared page layouts
   hooks/               # Custom React hooks
-  features/
-    <feature>/         # Domain-specific data, model, hooks, and UI
+  production-explorer/ # Application domain: data, model, hooks, and UI
   index.css            # Tailwind v4 and global styles
 ```
 
@@ -63,7 +62,7 @@ Use aliases instead of deep relative imports:
 ```ts
 import App from "app/app";
 import Button from "components/atoms/button";
-import ProductionMap from "features/production-explorer/components/production-map";
+import { ProductionMap } from "production-explorer/components/production-map";
 import { useExample } from "hooks/useExample";
 ```
 
@@ -73,16 +72,16 @@ prefix in their path values: TypeScript 7 no longer supports the old
 
 ## Architecture and components
 
-Use the hybrid architecture consistently:
+Use the architecture consistently:
 
 - Put reusable, domain-agnostic UI in `components/`, at the lowest suitable
   Atomic Design level.
-- Put domain-specific components, state, selectors, data, and hooks in the
-  owning `features/<feature>/` directory. A feature component may compose
-  shared components, but shared components must not import from a feature.
-- Move a feature component to `components/` only after it is genuinely
+- Put domain-specific components, state, selectors, data, and hooks in
+  `production-explorer/`. Domain code may compose shared components, but shared
+  components must not import from `production-explorer/`.
+- Move a domain component to `components/` only after it is genuinely
   reusable without its domain model.
-- Pages in `app/` compose features and templates; they do not own feature
+- Pages in `app/` compose domain components and templates; they do not own
   business logic.
 
 Choose the lowest suitable Atomic Design level:

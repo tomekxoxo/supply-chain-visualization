@@ -3,7 +3,7 @@ import {
   countries,
   products,
   productionRecords,
-} from "features/production-explorer/data";
+} from "production-explorer/data";
 import {
   createProductionFilterReducer,
   getAvailableCountryCodes,
@@ -12,14 +12,14 @@ import {
   getProductionSummary,
   getYearlyProduction,
   initialProductionFilters,
-} from "features/production-explorer/model";
+} from "production-explorer/model";
 import type {
   Country,
   CountryCode,
   Product,
   ProductId,
   ProductionFilters,
-} from "features/production-explorer/model";
+} from "production-explorer/model";
 
 export interface ProductionExplorer {
   availableCountries: readonly Country[];

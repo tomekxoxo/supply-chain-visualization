@@ -40,7 +40,7 @@ lint-staged.config.js        Staged-file quality commands
 
 ```bash
 npm install
-npm run dev
+yarn dev
 npm run build
 npm run lint
 npm run lint:fix

@@ -1,7 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it } from "vitest";
-import { useProductionExplorer } from "features/production-explorer";
+import { useProductionExplorer } from "production-explorer";
 import ProductionFilters from "./production-filters";
 
 const ProductionFiltersHarness = () => {

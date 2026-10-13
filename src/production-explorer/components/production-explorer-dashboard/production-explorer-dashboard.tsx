@@ -1,5 +1,5 @@
 import { forwardRef, lazy, Suspense } from "react";
-import { useProductionExplorer } from "features/production-explorer/hooks";
+import { useProductionExplorer } from "production-explorer/hooks";
 import ProductionFilters from "../production-filters";
 import ProductionSummary from "../production-summary";
 

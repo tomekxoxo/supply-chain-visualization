@@ -90,7 +90,7 @@ unrelated formatting changes out of a focused bug fix.
 
 ```bash
 npm run build
-npm run dev
+yarn dev
 npm install
 npm ls <package-name>
 ```
