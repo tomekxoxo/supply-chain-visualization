@@ -32,10 +32,14 @@ test.describe("production explorer filtering", () => {
 
     await expect(productionExplorerPage.country.locator("option")).toHaveText([
       "All countries",
+      "Australia",
+      "Canada",
       "China",
       "Germany",
+      "France",
       "India",
       "Poland",
+      "Ukraine",
       "United States",
     ]);
 
