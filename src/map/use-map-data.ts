@@ -49,6 +49,11 @@ export const useMapSelection = (
         ["get", "iso3"],
         selectedCountry ?? "",
       ]);
+      map.setLayoutProperty(
+        "countries-selected",
+        "visibility",
+        selectedCountry === null ? "none" : "visible",
+      );
     };
 
     if (map.isStyleLoaded()) {

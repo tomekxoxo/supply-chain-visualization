@@ -52,6 +52,7 @@ export const createMapStyle = (): StyleSpecification => {
       {
         filter: ["==", ["get", "iso3"], ""],
         id: "countries-selected",
+        layout: { visibility: "none" },
         paint: { "line-color": colors.selection, "line-width": 2.5 },
         source: "countries",
         type: "line",
