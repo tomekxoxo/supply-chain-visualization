@@ -13,6 +13,7 @@ import { useMapInteractions } from "./use-map-interactions";
 interface ProductionMapProps {
   countryTotals: readonly CountryProductionTotal[];
   filters: ProductionFilters;
+  mapViewResetVersion: number;
   onSelectCountry: (countryCode: CountryCode) => void;
   selectedCountry: CountryCode | null;
   selectedProduct: Product | null;
@@ -23,13 +24,15 @@ const ProductionMap = forwardRef<HTMLElement, ProductionMapProps>(
     {
       countryTotals,
       filters,
+      mapViewResetVersion,
       onSelectCountry,
       selectedCountry,
       selectedProduct,
     },
     ref,
   ) => {
-    const { containerRef, mapError, mapRef } = useMapInstance();
+    const { containerRef, mapError, mapRef } =
+      useMapInstance(mapViewResetVersion);
     const mapData = useMemo(
       () => getProductionMapData(countryTotals),
       [countryTotals],

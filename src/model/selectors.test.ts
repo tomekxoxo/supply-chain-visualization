@@ -22,6 +22,8 @@ describe("production selectors", () => {
     expect(getAvailableCountryCodes(productionRecords, "cotton")).toEqual([
       "CHN",
       "IND",
+      "NGA",
+      "TUR",
     ]);
   });
 
@@ -46,19 +48,23 @@ describe("production selectors", () => {
     expect(
       getCountryProductionTotals(productionRecords, filters, wheat),
     ).toEqual([
+      { countryCode: "AUS", unit: "tonnes", value: 22_100_000 },
+      { countryCode: "CAN", unit: "tonnes", value: 23_200_000 },
       { countryCode: "CHN", unit: "tonnes", value: 115_200_000 },
       { countryCode: "DEU", unit: "tonnes", value: 24_100_000 },
+      { countryCode: "FRA", unit: "tonnes", value: 38_200_000 },
       { countryCode: "IND", unit: "tonnes", value: 80_800_000 },
       { countryCode: "POL", unit: "tonnes", value: 9_400_000 },
+      { countryCode: "UKR", unit: "tonnes", value: 16_900_000 },
       { countryCode: "USA", unit: "tonnes", value: 60_100_000 },
     ]);
     expect(getYearlyProduction(productionRecords, filters, wheat)).toEqual([
-      { unit: "tonnes", value: 289_600_000, year: 2010 },
+      { unit: "tonnes", value: 390_000_000, year: 2010 },
     ]);
     expect(
       getProductionSummary(productionRecords, filters, wheat),
     ).toMatchObject({
-      total: 289_600_000,
+      total: 390_000_000,
       unit: "tonnes",
     });
   });

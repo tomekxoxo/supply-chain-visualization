@@ -22,6 +22,23 @@ describe("getProductionMapData", () => {
     expect(germany?.properties).toMatchObject({ intensity: null, value: null });
   });
 
+  it("joins the additional mock-data countries to the map geometry", () => {
+    const data = getProductionMapData([
+      { countryCode: "ARG", unit: "tonnes", value: 100 },
+      { countryCode: "VNM", unit: "tonnes", value: 50 },
+    ]);
+
+    const argentina = data.features.find(
+      ({ properties }) => properties.iso3 === "ARG",
+    );
+    const vietnam = data.features.find(
+      ({ properties }) => properties.iso3 === "VNM",
+    );
+
+    expect(argentina?.properties).toMatchObject({ intensity: 1, value: 100 });
+    expect(vietnam?.properties).toMatchObject({ intensity: 0.5, value: 50 });
+  });
+
   it("provides country rings that do not cross the antimeridian", () => {
     const data = getProductionMapData([]);
 

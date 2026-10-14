@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useReducer } from "react";
+import { useCallback, useMemo, useReducer, useState } from "react";
 import { countries, products, productionRecords } from "data";
 import {
   createProductionFilterReducer,
@@ -22,6 +22,7 @@ export interface ProductionExplorer {
   availableProducts: readonly Product[];
   countryTotals: ReturnType<typeof getCountryProductionTotals>;
   filters: ProductionFilters;
+  mapViewResetVersion: number;
   resetFilters: () => void;
   selectCountry: (countryCode: CountryCode | null) => void;
   selectedProduct: Product | null;
@@ -43,6 +44,7 @@ export const useProductionExplorer = (): ProductionExplorer => {
     [],
   );
   const [filters, dispatch] = useReducer(reducer, initialProductionFilters);
+  const [mapViewResetVersion, setMapViewResetVersion] = useState(0);
 
   const availableProductIds = useMemo(
     () => getAvailableProductIds(productionRecords, filters.countryCode),
@@ -97,13 +99,15 @@ export const useProductionExplorer = (): ProductionExplorer => {
   );
   const resetFilters = useCallback(() => {
     dispatch({ type: "reset" });
-  }, [dispatch]);
+    setMapViewResetVersion((version) => version + 1);
+  }, [dispatch, setMapViewResetVersion]);
 
   return {
     availableCountries,
     availableProducts,
     countryTotals,
     filters,
+    mapViewResetVersion,
     resetFilters,
     selectCountry,
     selectedProduct,

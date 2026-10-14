@@ -20,11 +20,21 @@ export type ProductionMapData = FeatureCollection<
 >;
 
 const countryCodeByNumericId: Readonly<Record<string, CountryCode>> = {
+  "032": "ARG",
+  "036": "AUS",
   "076": "BRA",
+  "124": "CAN",
   "156": "CHN",
   "276": "DEU",
+  "250": "FRA",
   "356": "IND",
+  "360": "IDN",
+  "484": "MEX",
+  "566": "NGA",
   "616": "POL",
+  "704": "VNM",
+  "792": "TUR",
+  "804": "UKR",
   "840": "USA",
 };
 

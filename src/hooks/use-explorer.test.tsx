@@ -12,8 +12,11 @@ describe("useProductionExplorer", () => {
 
     expect(result.current.availableCountries.map(({ code }) => code)).toEqual([
       "BRA",
+      "IDN",
+      "MEX",
+      "VNM",
     ]);
-    expect(result.current.countryTotals).toHaveLength(1);
+    expect(result.current.countryTotals).toHaveLength(4);
     expect(result.current.summary).not.toBeNull();
 
     act(() => {
@@ -45,5 +48,6 @@ describe("useProductionExplorer", () => {
       productId: null,
       yearRange: { from: 2010, to: 2026 },
     });
+    expect(result.current.mapViewResetVersion).toBe(1);
   });
 });

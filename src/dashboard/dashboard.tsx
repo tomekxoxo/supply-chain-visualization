@@ -62,6 +62,7 @@ const ProductionExplorerDashboard = forwardRef<HTMLDivElement>((_, ref) => {
           <ProductionMap
             countryTotals={explorer.countryTotals}
             filters={explorer.filters}
+            mapViewResetVersion={explorer.mapViewResetVersion}
             onSelectCountry={explorer.selectCountry}
             selectedCountry={explorer.filters.countryCode}
             selectedProduct={explorer.selectedProduct}

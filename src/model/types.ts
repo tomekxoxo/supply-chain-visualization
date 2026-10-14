@@ -3,7 +3,23 @@ export const PRODUCTION_YEAR_RANGE = {
   end: 2026,
 } as const;
 
-export type CountryCode = "BRA" | "CHN" | "DEU" | "IND" | "POL" | "USA";
+export type CountryCode =
+  | "ARG"
+  | "AUS"
+  | "BRA"
+  | "CAN"
+  | "CHN"
+  | "DEU"
+  | "FRA"
+  | "IND"
+  | "IDN"
+  | "MEX"
+  | "NGA"
+  | "POL"
+  | "TUR"
+  | "UKR"
+  | "USA"
+  | "VNM";
 
 export type ProductId = "coffee" | "cotton" | "soybeans" | "wheat";
 
