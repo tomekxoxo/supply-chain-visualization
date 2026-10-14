@@ -6,5 +6,6 @@ test("loads the production explorer dashboard", async ({ page }) => {
 
   await productionExplorerPage.goto();
 
+  await expect(page).toHaveTitle("Supply Chain Explorer");
   await expect(productionExplorerPage.main).toBeVisible();
 });

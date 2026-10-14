@@ -1,28 +1,14 @@
 {
-  "name": "vital",
+  "name": "supply-chain-visualization",
   "type": "module",
   "version": "1.0.0",
   "packageManager": "yarn@1.22.22",
-  "description": "Starter template for Vite with React (TypeScript). Supports Tailwind. Also Oxlint, Oxfmt, lint-staged, Commitlint and Atomic Design for components.",
-  "homepage": "https://github.com/jvidalv/vital#readme",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/jvidalv/vital.git"
-  },
-  "author": "Josep Vidal <josepvidalvidal@gmail.com>",
+  "description": "Interactive explorer for global supply chain production data.",
   "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/jvidalv/vital/issues"
-  },
   "keywords": [
-    "react",
-    "vite",
-    "typescript",
-    "tailwind",
-    "template",
-    "starter",
-    "oxlint",
-    "oxfmt"
+    "supply-chain",
+    "data-visualization",
+    "production"
   ],
   "browserslist": [
     ">0.2%",
@@ -43,6 +29,7 @@
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
     "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
     "preview": "vite preview",
     "prepare": "husky"
   },
