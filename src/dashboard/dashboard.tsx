@@ -2,6 +2,7 @@ import { forwardRef, lazy, Suspense } from "react";
 import { useProductionExplorer } from "hooks";
 import { ProductionFilters } from "../filters";
 import { ProductionSummary } from "../summary";
+import { SectionLoadingFallback } from "./section-loading-fallback";
 
 const ProductionAnnualChart = lazy(async () => {
   const { ProductionAnnualChart: ProductionAnnualChartComponent } =
@@ -42,21 +43,12 @@ const ProductionExplorerDashboard = forwardRef<HTMLDivElement>((_, ref) => {
       <div className="grid gap-6 lg:grid-cols-[minmax(0,1.6fr)_minmax(18rem,1fr)]">
         <Suspense
           fallback={
-            <section
-              aria-busy="true"
-              aria-labelledby="map-heading"
-              className="min-h-80 rounded-xl border border-border bg-surface p-6"
-            >
-              <h2
-                id="map-heading"
-                className="text-lg font-semibold text-heading"
-              >
-                Production map
-              </h2>
-              <p className="mt-2 text-sm text-text-secondary">
-                Loading map data…
-              </p>
-            </section>
+            <SectionLoadingFallback
+              description="Loading map data…"
+              headingId="map-heading"
+              minHeightClassName="min-h-80"
+              title="Production map"
+            />
           }
         >
           <ProductionMap
@@ -74,21 +66,12 @@ const ProductionExplorerDashboard = forwardRef<HTMLDivElement>((_, ref) => {
 
       <Suspense
         fallback={
-          <section
-            aria-busy="true"
-            aria-labelledby="chart-heading"
-            className="min-h-56 rounded-xl border border-border bg-surface p-6"
-          >
-            <h2
-              id="chart-heading"
-              className="text-lg font-semibold text-heading"
-            >
-              Annual production
-            </h2>
-            <p className="mt-2 text-sm text-text-secondary">
-              Loading chart data…
-            </p>
-          </section>
+          <SectionLoadingFallback
+            description="Loading chart data…"
+            headingId="chart-heading"
+            minHeightClassName="min-h-56"
+            title="Annual production"
+          />
         }
       >
         <ProductionAnnualChart data={explorer.yearlyProduction} />

@@ -16,8 +16,10 @@ import type {
   Product,
   ProductionFilters,
 } from "model";
-import { getCountryCode, getMapTooltipText } from "./map-interactions";
+import { getCountryCode } from "./map-interactions";
+import { ProductionMapLegend } from "./map-legend";
 import { createMapStyle, createProductionMapLayers } from "./map-style";
+import { useMapTooltip } from "./use-map-tooltip";
 
 maplibregl.setWorkerUrl(maplibreWorkerUrl);
 
@@ -26,12 +28,6 @@ const defaultMapBounds: [[number, number], [number, number]] = [
   [180, 83],
 ];
 const interactiveLayerIds = ["countries-fill"];
-
-interface MapTooltip {
-  latitude: number;
-  longitude: number;
-  text: string;
-}
 
 interface ProductionMapProps {
   countryTotals: readonly CountryProductionTotal[];
@@ -55,7 +51,10 @@ const ProductionMap = forwardRef<HTMLElement, ProductionMapProps>(
     ref,
   ) => {
     const [mapError, setMapError] = useState(false);
-    const [tooltip, setTooltip] = useState<MapTooltip | null>(null);
+    const { handleMouseMove, setTooltip, tooltip } = useMapTooltip(
+      filters,
+      selectedProduct,
+    );
     const mapData = useMemo(
       () => getProductionMapData(countryTotals),
       [countryTotals],
@@ -65,38 +64,6 @@ const ProductionMap = forwardRef<HTMLElement, ProductionMapProps>(
     const selectedCountryFilter = useMemo<FilterSpecification>(
       () => ["==", ["get", "iso3"], selectedCountry ?? ""],
       [selectedCountry],
-    );
-    const handleMouseMove = useCallback(
-      (event: MapLayerMouseEvent) => {
-        if (selectedProduct === null) {
-          return;
-        }
-
-        const feature = event.features?.[0];
-        const properties = feature?.properties;
-        const countryName =
-          typeof properties?.name === "string" ? properties.name : null;
-        const value =
-          typeof properties?.value === "number" ? properties.value : null;
-
-        if (countryName === null) {
-          setTooltip(null);
-          return;
-        }
-
-        setTooltip({
-          latitude: event.lngLat.lat,
-          longitude: event.lngLat.lng,
-          text: getMapTooltipText({
-            countryName,
-            period: filters.yearRange,
-            productName: selectedProduct.name,
-            unit: selectedProduct.unit,
-            value,
-          }),
-        });
-      },
-      [filters.yearRange, selectedProduct],
     );
     const handleClick = useCallback(
       (event: MapLayerMouseEvent) => {
@@ -129,19 +96,7 @@ const ProductionMap = forwardRef<HTMLElement, ProductionMapProps>(
                 : `Showing ${selectedProduct.name} production across countries.`}
             </p>
           </div>
-          <div
-            aria-label="Production map legend"
-            className="flex items-center gap-2 text-xs text-text-secondary"
-          >
-            <span className="h-3 w-3 rounded-sm bg-map-no-data" />
-            No data
-            <span className="h-3 w-3 rounded-sm bg-map-low" />
-            Lower production
-            <span className="h-3 w-3 rounded-sm bg-map-high" />
-            Higher production
-            <span className="h-3 w-3 rounded-sm bg-map-selection" />
-            Selected country
-          </div>
+          <ProductionMapLegend />
         </div>
 
         {mapError ? (
