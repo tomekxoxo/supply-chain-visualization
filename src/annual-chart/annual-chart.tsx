@@ -67,6 +67,7 @@ const ProductionAnnualChart = forwardRef<
             <YAxis
               stroke="var(--color-chart-axis)"
               tickFormatter={(value) => numberFormatter.format(Number(value))}
+              width={88}
             />
             <Tooltip
               formatter={(value) =>
