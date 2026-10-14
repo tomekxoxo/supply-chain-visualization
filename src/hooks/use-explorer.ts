@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { countries, products, productionRecords } from "data";
 import { createParser, parseAsStringLiteral, useQueryStates } from "nuqs";
 import {
@@ -75,16 +75,16 @@ export const useProductionExplorer = (): ProductionExplorer => {
   const [mapViewResetVersion, setMapViewResetVersion] = useState(0);
 
   const filters = useMemo(() => {
-    let normalizedFilters = reducer(initialProductionFilters, {
+    const filtersWithProduct = reducer(initialProductionFilters, {
       productId: queryFilters.product,
       type: "select-product",
     });
-    normalizedFilters = reducer(normalizedFilters, {
+    const filtersWithCountry = reducer(filtersWithProduct, {
       countryCode: queryFilters.country,
       type: "select-country",
     });
 
-    return reducer(normalizedFilters, {
+    return reducer(filtersWithCountry, {
       from: queryFilters.from,
       to: queryFilters.to,
       type: "set-year-range",
@@ -102,17 +102,6 @@ export const useProductionExplorer = (): ProductionExplorer => {
     },
     [setQueryFilters],
   );
-
-  useEffect(() => {
-    if (
-      queryFilters.country !== filters.countryCode ||
-      queryFilters.product !== filters.productId ||
-      queryFilters.from !== filters.yearRange.from ||
-      queryFilters.to !== filters.yearRange.to
-    ) {
-      updateFilters(filters);
-    }
-  }, [filters, queryFilters, updateFilters]);
 
   const availableProductIds = useMemo(
     () => getAvailableProductIds(productionRecords, filters.countryCode),

@@ -1,14 +1,37 @@
-import { forwardRef, useMemo } from "react";
+import { forwardRef, useCallback, useMemo, useState } from "react";
 import { getProductionMapData } from "data";
+import * as maplibregl from "maplibre-gl";
+import {
+  Layer,
+  Map,
+  Popup,
+  Source,
+  type MapLayerMouseEvent,
+} from "react-map-gl/maplibre";
+import maplibreWorkerUrl from "maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url";
+import type { FilterSpecification } from "maplibre-gl";
 import type {
   CountryCode,
   CountryProductionTotal,
   Product,
   ProductionFilters,
 } from "model";
-import { useMapData, useMapSelection } from "./use-map-data";
-import { useMapInstance } from "./use-map-instance";
-import { useMapInteractions } from "./use-map-interactions";
+import { getCountryCode, getMapTooltipText } from "./map-interactions";
+import { createMapStyle, createProductionMapLayers } from "./map-style";
+
+maplibregl.setWorkerUrl(maplibreWorkerUrl);
+
+const defaultMapBounds: [[number, number], [number, number]] = [
+  [-180, -58],
+  [180, 83],
+];
+const interactiveLayerIds = ["countries-fill"];
+
+interface MapTooltip {
+  latitude: number;
+  longitude: number;
+  text: string;
+}
 
 interface ProductionMapProps {
   countryTotals: readonly CountryProductionTotal[];
@@ -31,16 +54,63 @@ const ProductionMap = forwardRef<HTMLElement, ProductionMapProps>(
     },
     ref,
   ) => {
-    const { containerRef, mapError, mapRef } =
-      useMapInstance(mapViewResetVersion);
+    const [mapError, setMapError] = useState(false);
+    const [tooltip, setTooltip] = useState<MapTooltip | null>(null);
     const mapData = useMemo(
       () => getProductionMapData(countryTotals),
       [countryTotals],
     );
+    const mapStyle = useMemo(() => createMapStyle(), []);
+    const mapLayers = useMemo(() => createProductionMapLayers(), []);
+    const selectedCountryFilter = useMemo<FilterSpecification>(
+      () => ["==", ["get", "iso3"], selectedCountry ?? ""],
+      [selectedCountry],
+    );
+    const handleMouseMove = useCallback(
+      (event: MapLayerMouseEvent) => {
+        if (selectedProduct === null) {
+          return;
+        }
 
-    useMapData(mapRef, mapData);
-    useMapSelection(mapRef, selectedCountry);
-    useMapInteractions({ filters, mapRef, onSelectCountry, selectedProduct });
+        const feature = event.features?.[0];
+        const properties = feature?.properties;
+        const countryName =
+          typeof properties?.name === "string" ? properties.name : null;
+        const value =
+          typeof properties?.value === "number" ? properties.value : null;
+
+        if (countryName === null) {
+          setTooltip(null);
+          return;
+        }
+
+        setTooltip({
+          latitude: event.lngLat.lat,
+          longitude: event.lngLat.lng,
+          text: getMapTooltipText({
+            countryName,
+            period: filters.yearRange,
+            productName: selectedProduct.name,
+            unit: selectedProduct.unit,
+            value,
+          }),
+        });
+      },
+      [filters.yearRange, selectedProduct],
+    );
+    const handleClick = useCallback(
+      (event: MapLayerMouseEvent) => {
+        const countryCode = getCountryCode(
+          event.features?.[0]?.properties?.iso3,
+        );
+        const value = event.features?.[0]?.properties?.value;
+
+        if (countryCode !== null && typeof value === "number") {
+          onSelectCountry(countryCode);
+        }
+      },
+      [onSelectCountry],
+    );
 
     return (
       <section
@@ -69,6 +139,8 @@ const ProductionMap = forwardRef<HTMLElement, ProductionMapProps>(
             Lower production
             <span className="h-3 w-3 rounded-sm bg-map-high" />
             Higher production
+            <span className="h-3 w-3 rounded-sm bg-map-selection" />
+            Selected country
           </div>
         </div>
 
@@ -77,7 +149,47 @@ const ProductionMap = forwardRef<HTMLElement, ProductionMapProps>(
             The production map is not available in this browser.
           </p>
         ) : (
-          <div ref={containerRef} className="mt-4 h-96 w-full" />
+          <div className="mt-4 h-96 w-full">
+            <Map
+              key={mapViewResetVersion}
+              cursor={selectedProduct === null ? "" : "pointer"}
+              initialViewState={{
+                bounds: defaultMapBounds,
+                fitBoundsOptions: { padding: 20 },
+              }}
+              interactiveLayerIds={
+                selectedProduct === null ? [] : interactiveLayerIds
+              }
+              mapStyle={mapStyle}
+              onClick={handleClick}
+              onError={() => setMapError(true)}
+              onMouseLeave={() => setTooltip(null)}
+              onMouseMove={handleMouseMove}
+            >
+              <Source id="countries" type="geojson" data={mapData}>
+                <Layer {...mapLayers.countriesFill} />
+                <Layer {...mapLayers.countriesOutline} />
+                <Layer
+                  {...mapLayers.countriesSelected}
+                  filter={selectedCountryFilter}
+                />
+              </Source>
+
+              {selectedProduct !== null && tooltip !== null ? (
+                <Popup
+                  closeButton={false}
+                  closeOnClick={false}
+                  latitude={tooltip.latitude}
+                  longitude={tooltip.longitude}
+                  maxWidth="20rem"
+                >
+                  <p className="m-0 text-sm text-text-inverse">
+                    {tooltip.text}
+                  </p>
+                </Popup>
+              ) : null}
+            </Map>
+          </div>
         )}
 
         <p className="mt-3 text-xs text-text-muted">
