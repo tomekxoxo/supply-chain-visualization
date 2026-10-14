@@ -35,6 +35,7 @@
   },
   "dependencies": {
     "maplibre-gl": "^6.14.0",
+    "nuqs": "^2.10.2",
     "react": "^19.3.0",
     "react-dom": "^19.3.0",
     "react-is": "19.3.0",

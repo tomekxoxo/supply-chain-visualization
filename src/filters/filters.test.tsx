@@ -1,5 +1,6 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import { NuqsTestingAdapter } from "nuqs/adapters/testing";
 import { describe, expect, it } from "vitest";
 import { useProductionExplorer } from "hooks";
 import { ProductionFilters } from "./filters";
@@ -10,11 +11,18 @@ const ProductionFiltersHarness = () => {
   return <ProductionFilters explorer={explorer} />;
 };
 
+const renderProductionFilters = () =>
+  render(
+    <NuqsTestingAdapter>
+      <ProductionFiltersHarness />
+    </NuqsTestingAdapter>,
+  );
+
 describe("ProductionFilters", () => {
   it("limits products after selecting a country", async () => {
     const user = userEvent.setup();
 
-    render(<ProductionFiltersHarness />);
+    renderProductionFilters();
     await user.selectOptions(
       screen.getByRole("combobox", { name: "Country" }),
       "BRA",
@@ -33,7 +41,7 @@ describe("ProductionFilters", () => {
   it("resets selections and the range", async () => {
     const user = userEvent.setup();
 
-    render(<ProductionFiltersHarness />);
+    renderProductionFilters();
     await user.selectOptions(
       screen.getByRole("combobox", { name: "Country" }),
       "POL",

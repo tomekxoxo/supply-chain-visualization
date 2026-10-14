@@ -1,5 +1,6 @@
-import { useCallback, useMemo, useReducer, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { countries, products, productionRecords } from "data";
+import { createParser, parseAsStringLiteral, useQueryStates } from "nuqs";
 import {
   createProductionFilterReducer,
   getAvailableCountryCodes,
@@ -8,6 +9,7 @@ import {
   getProductionSummary,
   getYearlyProduction,
   initialProductionFilters,
+  PRODUCTION_YEAR_RANGE,
 } from "model";
 import type {
   Country,
@@ -16,6 +18,29 @@ import type {
   ProductId,
   ProductionFilters,
 } from "model";
+
+const countryCodes = countries.map(({ code }) => code);
+const productIds = products.map(({ id }) => id);
+
+const parseAsProductionYear = createParser({
+  parse: (value) => {
+    const year = Number(value);
+
+    return Number.isInteger(year) &&
+      year >= PRODUCTION_YEAR_RANGE.start &&
+      year <= PRODUCTION_YEAR_RANGE.end
+      ? year
+      : null;
+  },
+  serialize: (value) => String(value),
+});
+
+const productionFilterQuery = {
+  country: parseAsStringLiteral(countryCodes),
+  from: parseAsProductionYear.withDefault(PRODUCTION_YEAR_RANGE.start),
+  product: parseAsStringLiteral(productIds),
+  to: parseAsProductionYear.withDefault(PRODUCTION_YEAR_RANGE.end),
+};
 
 export interface ProductionExplorer {
   availableCountries: readonly Country[];
@@ -43,8 +68,51 @@ export const useProductionExplorer = (): ProductionExplorer => {
     () => createProductionFilterReducer(productionRecords),
     [],
   );
-  const [filters, dispatch] = useReducer(reducer, initialProductionFilters);
+  const [queryFilters, setQueryFilters] = useQueryStates(
+    productionFilterQuery,
+    { history: "replace" },
+  );
   const [mapViewResetVersion, setMapViewResetVersion] = useState(0);
+
+  const filters = useMemo(() => {
+    let normalizedFilters = reducer(initialProductionFilters, {
+      productId: queryFilters.product,
+      type: "select-product",
+    });
+    normalizedFilters = reducer(normalizedFilters, {
+      countryCode: queryFilters.country,
+      type: "select-country",
+    });
+
+    return reducer(normalizedFilters, {
+      from: queryFilters.from,
+      to: queryFilters.to,
+      type: "set-year-range",
+    });
+  }, [queryFilters, reducer]);
+
+  const updateFilters = useCallback(
+    (nextFilters: ProductionFilters) => {
+      void setQueryFilters({
+        country: nextFilters.countryCode,
+        from: nextFilters.yearRange.from,
+        product: nextFilters.productId,
+        to: nextFilters.yearRange.to,
+      });
+    },
+    [setQueryFilters],
+  );
+
+  useEffect(() => {
+    if (
+      queryFilters.country !== filters.countryCode ||
+      queryFilters.product !== filters.productId ||
+      queryFilters.from !== filters.yearRange.from ||
+      queryFilters.to !== filters.yearRange.to
+    ) {
+      updateFilters(filters);
+    }
+  }, [filters, queryFilters, updateFilters]);
 
   const availableProductIds = useMemo(
     () => getAvailableProductIds(productionRecords, filters.countryCode),
@@ -81,26 +149,26 @@ export const useProductionExplorer = (): ProductionExplorer => {
   );
   const selectCountry = useCallback(
     (countryCode: CountryCode | null) => {
-      dispatch({ countryCode, type: "select-country" });
+      updateFilters(reducer(filters, { countryCode, type: "select-country" }));
     },
-    [dispatch],
+    [filters, reducer, updateFilters],
   );
   const selectProduct = useCallback(
     (productId: ProductId | null) => {
-      dispatch({ productId, type: "select-product" });
+      updateFilters(reducer(filters, { productId, type: "select-product" }));
     },
-    [dispatch],
+    [filters, reducer, updateFilters],
   );
   const setYearRange = useCallback(
     (from: number, to: number) => {
-      dispatch({ from, to, type: "set-year-range" });
+      updateFilters(reducer(filters, { from, to, type: "set-year-range" }));
     },
-    [dispatch],
+    [filters, reducer, updateFilters],
   );
   const resetFilters = useCallback(() => {
-    dispatch({ type: "reset" });
+    updateFilters(initialProductionFilters);
     setMapViewResetVersion((version) => version + 1);
-  }, [dispatch, setMapViewResetVersion]);
+  }, [setMapViewResetVersion, updateFilters]);
 
   return {
     availableCountries,
