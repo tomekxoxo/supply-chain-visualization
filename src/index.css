@@ -4,7 +4,15 @@
 
 @layer base {
   html {
+    min-height: 100%;
+    background-color: var(--color-canvas);
     -moz-osx-font-smoothing: grayscale;
     -webkit-font-smoothing: antialiased;
+  }
+
+  body,
+  #root {
+    min-height: 100%;
+    background-color: var(--color-canvas);
   }
 }
